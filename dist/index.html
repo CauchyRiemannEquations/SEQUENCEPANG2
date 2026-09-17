@@ -1,0 +1,9 @@
+<!doctype html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#123c30"><meta name="description" content="수열을 연결하고 별을 모으세요. 애플망고와 함께하는 8개의 수열 퍼즐."><title>SEQUENCEPANG 2</title><link rel="stylesheet" href="./style.css"></head><body>
+<main class="game"><header><a class="brand" href="./" aria-label="시퀀스팡 2 처음으로">SEQUENCE<span>PANG<b>2</b></span></a><div class="header-actions"><button id="sound" class="icon" aria-label="소리 켜기" aria-pressed="false">♪</button><button id="help" class="icon" aria-label="게임 방법">?</button></div></header>
+<section class="stage-head"><div><div class="eyebrow">STAR MANGO</div><button id="stage-picker" class="stage-title" aria-label="스테이지 선택">STAGE <span id="stage-no">01</span> <small>⌄</small></button></div><img id="mascot" class="mascot" alt="별을 든 애플망고" hidden></section>
+<section class="stats" aria-label="게임 현황"><div><span>모은 별</span><strong><b class="gold">★</b> <span id="star-count">0 / 4</span></strong></div><div><span>남은 횟수</span><strong id="moves">2</strong></div></section>
+<div class="board-shell"><div id="board" class="board" aria-label="수열 퍼즐판"></div><svg id="lines" aria-hidden="true"><polyline/></svg></div>
+<div class="feedback" id="feedback" role="status" aria-live="polite">숫자 3개 이상을 이어 보세요</div>
+<div class="actions"><button id="undo"><span>↶</span> 되돌리기</button><button id="restart"><span>↻</span> 다시 하기</button><button id="hint"><span>✧</span> 힌트</button></div>
+<button id="submit" class="submit" hidden>선택 완료</button>
+</main><dialog id="modal"><div id="modal-content"></div><button id="close-modal" class="secondary">닫기</button></dialog><script type="module" src="./app.js"></script></body></html>
