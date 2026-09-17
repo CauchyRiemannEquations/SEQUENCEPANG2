@@ -1,9 +1,96 @@
-<!doctype html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#123c30"><meta name="description" content="수열을 연결하고 별을 모으세요. 애플망고와 함께하는 8개의 수열 퍼즐."><title>SEQUENCEPANG 2</title><link rel="stylesheet" href="./style.css"></head><body>
-<main class="game"><header><a class="brand" href="./" aria-label="시퀀스팡 2 처음으로">SEQUENCE<span>PANG<b>2</b></span></a><div class="header-actions"><button id="sound" class="icon" aria-label="소리 켜기" aria-pressed="false">♪</button><button id="help" class="icon" aria-label="게임 방법">?</button></div></header>
-<section class="stage-head"><div><div class="eyebrow">STAR MANGO</div><button id="stage-picker" class="stage-title" aria-label="스테이지 선택">STAGE <span id="stage-no">01</span> <small>⌄</small></button></div><img id="mascot" class="mascot" alt="별을 든 애플망고" hidden></section>
-<section class="stats" aria-label="게임 현황"><div><span>모은 별</span><strong><b class="gold">★</b> <span id="star-count">0 / 4</span></strong></div><div><span>남은 횟수</span><strong id="moves">2</strong></div></section>
-<div class="board-shell"><div id="board" class="board" aria-label="수열 퍼즐판"></div><svg id="lines" aria-hidden="true"><polyline/></svg></div>
-<div class="feedback" id="feedback" role="status" aria-live="polite">숫자 3개 이상을 이어 보세요</div>
-<div class="actions"><button id="undo"><span>↶</span> 되돌리기</button><button id="restart"><span>↻</span> 다시 하기</button><button id="hint"><span>✧</span> 힌트</button></div>
-<button id="submit" class="submit" hidden>선택 완료</button>
-</main><dialog id="modal"><div id="modal-content"></div><button id="close-modal" class="secondary">닫기</button></dialog><script type="module" src="./app.js"></script></body></html>
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#06291f">
+  <meta name="application-name" content="시퀀스타">
+  <meta name="description" content="시퀀스타 — 수열을 연결하고 별을 모으는 애플망고 퍼즐.">
+  <title>시퀀스타 · SEQUENSTAR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Bagel+Fat+One&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section id="home" class="home-screen" aria-label="시퀀스타 메인화면">
+      <div class="home-tools">
+        <button class="icon sound-toggle" aria-label="소리 켜기" aria-pressed="false">♪</button>
+      </div>
+      <div class="ambient" aria-hidden="true"><span>✦</span><span>✧</span><span>✦</span><span>·</span><span>✧</span></div>
+      <div class="welcome-card">
+        <div class="hero-mascot"><img src="./mango.png" alt="금빛 별과 애플망고 캐릭터" width="148" height="148"></div>
+        <div class="title-group">
+          <h1 class="welcome-logo" aria-label="시퀀스타"><svg viewBox="0 0 560 170" role="img" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="logo-mango" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#ffdf78"/>
+                      <stop offset="100%" stop-color="#efa638"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M100 92 L212 84 L322 92 L446 82" stroke="rgba(255,203,82,0.5)" stroke-width="16" fill="none" stroke-linecap="round"/>
+                  <g font-family="'Bagel Fat One', 'Jua', sans-serif" font-size="56" text-anchor="middle">
+                    <g transform="translate(100,88) rotate(-6)">
+                      <rect x="-46" y="-46" width="92" height="92" rx="18" fill="#fffbea" stroke="#0b3a2b" stroke-width="5"/>
+                      <text y="20" fill="#14532d">시</text>
+                      <text x="32" y="-24" font-family="Outfit, sans-serif" font-weight="800" font-size="17" fill="#efa638">1</text>
+                    </g>
+                    <g transform="translate(212,82) rotate(4)">
+                      <rect x="-46" y="-46" width="92" height="92" rx="18" fill="#fffbea" stroke="#0b3a2b" stroke-width="5"/>
+                      <text y="20" fill="#14532d">퀀</text>
+                      <text x="32" y="-24" font-family="Outfit, sans-serif" font-weight="800" font-size="17" fill="#efa638">2</text>
+                    </g>
+                    <g transform="translate(322,90) rotate(-4)">
+                      <rect x="-46" y="-46" width="92" height="92" rx="18" fill="#fffbea" stroke="#0b3a2b" stroke-width="5"/>
+                      <text y="20" fill="#14532d">스</text>
+                      <text x="32" y="-24" font-family="Outfit, sans-serif" font-weight="800" font-size="17" fill="#efa638">4</text>
+                    </g>
+                    <g transform="translate(446,80) rotate(7)">
+                      <path fill="#ffd84d" opacity="0.9" transform="scale(1.35)" d="M0-58 L11-25 L41-41 L24-12 L58-6 L25 5 L41 36 L11 20 L3 57 L-9 24 L-39 38 L-24 9 L-57 1 L-25-9 L-38-39 L-11-22 Z"/>
+                      <rect x="-50" y="-50" width="100" height="100" rx="20" fill="url(#logo-mango)" stroke="#0b3a2b" stroke-width="6"/>
+                      <text y="22" font-size="60" fill="#06291f">타</text>
+                      <text x="36" y="-26" font-family="Outfit, sans-serif" font-weight="800" font-size="18" fill="#14532d">★</text>
+                    </g>
+                  </g>
+                </svg></h1>
+          <div class="english-title" aria-hidden="true">SEQUEN<span>STAR</span></div>
+        </div>
+        <div class="home-progress"><span>클리어</span><strong id="home-cleared">0</strong><span id="home-total">/ 8</span><span class="gold" aria-hidden="true">★</span></div>
+        <div class="home-actions">
+          <button id="start-game" class="start-button">시작하기 <span aria-hidden="true">▶</span></button>
+          <div class="home-sub-actions">
+            <button id="stage-picker">스테이지 선택</button>
+            <button id="home-help">게임 방법</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="game" class="game" aria-label="퍼즐 플레이" hidden>
+      <header class="game-header">
+        <button id="go-home" class="icon" aria-label="메인으로">‹</button>
+        <span class="small-logo">SEQUEN<span>STAR</span></span>
+        <button class="icon sound-toggle" aria-label="소리 켜기" aria-pressed="false">♪</button>
+      </header>
+      <div class="stage-head"><h2>STAGE <span id="stage-no">01</span></h2><button id="help" class="icon" aria-label="게임 방법">?</button></div>
+      <section class="stats" aria-label="게임 현황">
+        <div><span>모은 별</span><strong><b class="gold">★</b> <span id="star-count">0 / 4</span></strong></div>
+        <div><span>남은 횟수</span><strong id="moves">2</strong></div>
+      </section>
+      <div class="board-shell">
+        <div id="board" class="board" aria-label="수열 퍼즐판"></div>
+        <svg id="lines" aria-hidden="true"><polyline/></svg>
+      </div>
+      <div class="feedback" id="feedback" role="status" aria-live="polite">숫자 3개 이상을 이어 보세요</div>
+      <div class="game-actions"><button id="hint"><span aria-hidden="true">✧</span> 힌트</button></div>
+      <button id="submit" class="primary" hidden>선택 완료</button>
+    </section>
+  </main>
+  <dialog id="modal" aria-labelledby="modal-title">
+    <div id="modal-content"></div>
+    <button id="close-modal" class="secondary">닫기</button>
+  </dialog>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
