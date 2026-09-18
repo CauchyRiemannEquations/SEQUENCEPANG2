@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {kind,valid,remove,stars,solve} from '../dist/engine.js';import {levels} from '../dist/levels.js';
 test('arithmetic and geometric sequences in both directions',()=>{for(const v of [[1,3,5],[7,5,3],[2,4,8],[8,4,2],[3,3,3]])assert.ok(kind(v));for(const v of [[1,2],[1,3,6],[2,4,9]])assert.equal(kind(v),null);});
-test('reject duplicate and nonadjacent cells',()=>{assert.equal(valid(levels[0].board,[0,1,0],4),false);assert.equal(valid(levels[0].board,[0,2,8],4),false);});
-test('gravity conserves remaining identities and leaves top empty',()=>{const b=levels[0].board;const after=remove(b,[8,9,10],4);assert.equal(after.filter(Boolean).length,13);assert.equal(after[0],null);assert.equal(after[8].id,b[4].id);assert.deepEqual(b,levels[0].board);});
+test('reject duplicate and nonadjacent cells',()=>{assert.equal(valid(levels[8].board,[0,1,0],4),false);assert.equal(valid(levels[8].board,[0,2,8],4),false);});
+test('gravity conserves remaining identities and leaves top empty',()=>{const b=levels[8].board;const after=remove(b,[8,9,10],4);assert.equal(after.filter(Boolean).length,13);assert.equal(after[0],null);assert.equal(after[8].id,b[4].id);assert.deepEqual(b,levels[8].board);});
 for(const l of levels)test(`stage ${l.id} is solvable within ${l.moves} moves`,()=>{const plan=solve(l.board,l.n,l.moves);assert.ok(plan);let b=l.board;for(const p of plan){assert.ok(valid(b,p,l.n));b=remove(b,p,l.n);}assert.equal(stars(b),0);console.log(`Stage ${l.id}: ${plan.length} moves`);});

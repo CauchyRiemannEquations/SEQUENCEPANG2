@@ -89,15 +89,11 @@ button:active:not(:disabled) { transform: translateY(2px); }
 .tile.starred { background: linear-gradient(145deg, #ffb773, #ee8253); box-shadow: inset 0 2px 0 #ffffff60, 0 4px 0 #a64e31; }
 .tile .star { position: absolute; right: 5px; top: 2px; color: #fff5ab; font-size: 14px; text-shadow: 0 1px 3px #803700; }
 .tile.selected { background: #eaffb3; color: #1c5538; transform: scale(.94); box-shadow: 0 0 0 3px #f6ffce, 0 0 25px #d6ff8155; }
-.tile.hinted { animation: hint 1s ease-in-out infinite; }
 .empty { aspect-ratio: 1; border-radius: 14px; background: #103a2b; }
 .board-shell svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; overflow: visible; }
 .board-shell polyline { fill: none; stroke: #fffbc3; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; opacity: .68; }
 .feedback { text-align: center; min-height: 62px; padding: 25px 0 12px; color: #d7e4c4; font-size: 15px; line-height: 1.5; }
 .feedback.good { color: #fbe27c; }
-.game-actions { display: flex; justify-content: center; }
-.game-actions button { padding: 10px 22px; background: #ffffff07; border: 1px solid #ffffff1a; border-radius: 30px; font-size: 15px; color: #bed3b8; }
-.game-actions button span { color: var(--gold); margin-right: 5px; }
 .primary { background: linear-gradient(#ffdf78, #ffc64e); color: #173b28; border-radius: 14px; padding: 16px 20px; font-size: 20px; width: 100%; margin-top: 12px; box-shadow: 0 4px 0 #a7792b; }
 .secondary { background: #ffffff09; border: 1px solid #ffffff1a; border-radius: 13px; padding: 13px 20px; width: 100%; margin-top: 14px; color: #c4d7bb; font-size: 16px; }
 dialog { background: linear-gradient(155deg, #144b35, #082e23); color: #fff5d5; border: 1px solid #748d5c80; border-radius: 26px; width: min(90vw, 370px); padding: 28px; box-shadow: 0 25px 80px #0008; }
@@ -117,7 +113,6 @@ dialog p { line-height: 1.7; color: #d4e1c9; font-family: system-ui, sans-serif;
 .level-grid small { display: block; font-size: 12px; }
 @keyframes bob { 50% { transform: translateY(-8px) rotate(3deg); } }
 @keyframes twinkle { 50% { opacity: .07; transform: scale(.8); } }
-@keyframes hint { 50% { box-shadow: 0 0 0 3px #f6ffce, 0 0 22px #ffd75c; } }
 @media (max-width: 480px) {
   body { padding: 0; display: block; }
   .app-shell { width: 100%; max-width: 430px; margin: auto; border: none; border-radius: 0; box-shadow: none; }
@@ -142,3 +137,47 @@ dialog p { line-height: 1.7; color: #d4e1c9; font-family: system-ui, sans-serif;
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* Sequence series: the same layout language as Sequence Pang, in mango gold. */
+.home-screen { padding: 64px 24px 38px; background: radial-gradient(circle at 86% 16%, #ffc64e12 0 54px, transparent 55px), linear-gradient(155deg, #0b3a2b, #06291f); }
+.welcome-card { gap: 16px; text-align: center; }
+.series-label, .eyebrow { font: 700 10px 'Outfit', sans-serif; letter-spacing: 2.5px; color: var(--muted); }
+.series-label { margin-bottom: 2px; }
+.hero-mascot { width: 98px; height: 98px; margin: 0; border-radius: 50%; background: #ffc64e0d; box-shadow: 0 0 34px #ffc64e14; }
+.hero-mascot img { mix-blend-mode: normal; border-radius: 0; }
+.title-group { margin-bottom: 0; }
+.welcome-logo { width: 100%; max-width: 320px; margin: 0 auto; }
+.english-title { font-size: 12px; letter-spacing: 4px; margin-top: 0; }
+.welcome-tagline { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.home-progress { width: auto; min-width: 180px; border-radius: 50px; padding: 8px 18px; margin: 0; gap: 8px; font-size: 13px; }
+.home-progress strong { font-size: 18px; margin-left: 8px; }
+.how-to-play { width: 100%; padding: 12px 16px; background: #06291fb8; border: 1px solid #ffd15b24; border-radius: 16px; text-align: left; }
+.htp-title { text-align: center; font: 600 10px 'Outfit', sans-serif; letter-spacing: 2px; color: var(--muted); margin-bottom: 8px; }
+.how-to-play p { margin: 5px 0; font-size: 13px; line-height: 1.45; color: #d0dcc2; }
+.how-to-play p span { color: var(--gold); margin-right: 8px; }
+.start-button { border-radius: 16px; padding: 16px; font-size: 24px; }
+.home-sub-actions { margin-top: 17px; gap: 8px; }
+.home-sub-actions button { border-radius: 50px; font-size: 13px; padding: 12px 6px; background: #06291f99; }
+.series-mark { font: 700 9px/1.4 'Outfit', sans-serif; letter-spacing: 1.4px; color: var(--muted); }
+.stage-head { gap: 12px; padding-top: 24px; }
+.stage-head .eyebrow { font-family: 'Jua', sans-serif; letter-spacing: 1px; margin: 0 0 7px; font-size: 12px; }
+#stage-title { color: #d0dcc2; font-size: 14px; }
+.lesson { margin: 0 0 16px; background: #ffd15b0c; border: 1px solid #ffd15b28; border-radius: 13px; padding: 12px 14px; font-size: 14px; line-height: 1.6; color: #e0e8ce; }
+dialog { max-height: calc(100dvh - 32px); overflow-y: auto; }
+dialog h2 { font-size: 24px; }
+.chapter-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 20px 0; }
+.chapter-tabs button { border: 1px solid #ffffff20; border-radius: 12px; padding: 11px 8px; background: #ffffff05; color: var(--muted); font: 700 15px 'Outfit', sans-serif; }
+.chapter-tabs button span { margin-right: 7px; font-size: 19px; }
+.chapter-tabs button[aria-pressed="true"] { background: #ffd15b14; border-color: #ffd15b99; color: var(--gold); }
+.chapter-summary { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 20px 0; }
+.chapter-summary h3 { font-weight: 400; font-size: 20px; margin: 0 0 6px; }
+.chapter-summary p { margin: 0; font: 12px 'Jua', sans-serif; color: var(--muted); }
+.chapter-summary strong { font: 700 25px 'Outfit', sans-serif; color: var(--gold); }
+.chapter-summary small { font-size: 13px; color: var(--muted); }
+.settings-list { display: grid; gap: 9px; margin-top: 20px; }
+.settings-list button { text-align: left; border-radius: 13px; border: 1px solid #ffffff1a; padding: 15px; background: #ffffff06; font-size: 17px; display: flex; justify-content: space-between; align-items: center; min-height: 52px; }
+.settings-list button span { color: var(--gold); font-size: 15px; }
+.settings-note { font-size: 12px; text-align: center; }
+.level-grid button { min-height: 48px; }
+@media (max-height: 740px) { .home-screen { padding-top: 48px; padding-bottom: 26px; } .welcome-card { gap: 12px; } .hero-mascot { width: 76px; height: 76px; } .welcome-logo { max-width: 285px; } }
+@media (max-width: 370px) { .game { padding-inline: 16px; } dialog { padding: 22px; } .welcome-tagline { font-size: 12px; } }

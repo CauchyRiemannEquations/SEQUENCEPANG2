@@ -49,4 +49,10 @@ export class GameSession {
     this.start(this.index);
     return true;
   }
+
+  restart() {
+    if (this.status === 'idle') return false;
+    this.start(this.index);
+    return true;
+  }
 }

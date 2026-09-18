@@ -1,20 +1,17 @@
-import { kind, adjacent, stars, solve } from './engine.js';
-import { levels } from './levels.js';
+import { kind, adjacent, stars } from './engine.js';
+import { levels, chapters } from './levels.js';
 import { GameSession } from './session.js';
+import { readProgress, saveProgress } from './progress.js';
 
 const $ = id => document.getElementById(id);
 const session = new GameSession(levels);
 const modal = $('modal');
-let selected = [], hints = [];
+let selected = [];
 let dragging = false, moved = false, start = -1, sound = false, audio;
 let resultOpen = false;
-// Preserve completion records from the first SEQUENCEPANG2 release.
-const storageKey = 'sequencepang2-v1';
 let progress = {};
-try {
-  const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
-  if (saved && typeof saved === 'object' && !Array.isArray(saved)) progress = saved;
-} catch {}
+try { progress = readProgress(localStorage, levels); } catch {}
+try { sound = localStorage.getItem('sequenstar-sound') === 'on'; } catch {}
 
 function beep(win = false) {
   if (!sound) return;
@@ -48,10 +45,9 @@ function showHome() {
   closeModal();
   dragging = false;
   selected = [];
-  hints = [];
   $('home').hidden = false;
   $('game').hidden = true;
-  $('home-cleared').textContent = levels.filter((_, i) => progress[i] === true).length;
+  $('home-cleared').textContent = levels.filter(level => progress[level.key] === true).length;
   $('home-total').textContent = `/ ${levels.length}`;
   $('start-game').innerHTML = `${session.status === 'playing' ? '계속하기' : '시작하기'} <span aria-hidden="true">▶</span>`;
 }
@@ -66,18 +62,21 @@ function showGame() {
 function load(index) {
   session.start(index);
   selected = [];
-  hints = [];
   dragging = false;
   showGame();
-  message('숫자 3개 이상을 이어 보세요');
+  message('별을 모두 모아 보세요');
 }
 
 function render() {
   const { board, moves, index, level } = session;
   $('stage-no').textContent = String(index + 1).padStart(2, '0');
   $('moves').textContent = moves;
+  $('stage-title').textContent = level.title;
+  $('chapter-label').textContent = chapters.find(c => c.id === level.chapter).name;
+  $('lesson').hidden = !level.lesson;
+  $('lesson').textContent = level.lesson || '';
+  $('board').setAttribute('aria-label', `${level.n}×${level.n} 수열 퍼즐판`);
   $('star-count').textContent = `${stars(level.board) - stars(board)} / ${stars(level.board)}`;
-  $('hint').disabled = session.status !== 'playing';
   $('board').style.setProperty('--n', level.n);
   $('board').innerHTML = board.map((cell, i) => cell ? `
     <button class="tile${cell.star ? ' starred' : ''}" data-i="${i}"
@@ -91,7 +90,6 @@ function paint() {
   document.querySelectorAll('.tile').forEach(element => {
     const i = +element.dataset.i;
     element.classList.toggle('selected', selected.includes(i));
-    element.classList.toggle('hinted', hints.includes(i));
     element.setAttribute('aria-pressed', String(selected.includes(i)));
   });
   const shell = $('board').parentElement.getBoundingClientRect();
@@ -105,10 +103,9 @@ function paint() {
 }
 
 function pick(i) {
-  if (session.status !== 'playing' || !session.board[i]) return;
+  if (modal.open || session.status !== 'playing' || !session.board[i]) return;
   if (selected.length > 1 && selected.at(-2) === i) selected.pop();
   else if (!selected.includes(i) && (!selected.length || adjacent(selected.at(-1), i, session.level.n))) selected.push(i);
-  hints = [];
   paint();
   if (selected.length) {
     const values = selected.map(i => session.board[i].v), sequence = kind(values);
@@ -117,7 +114,7 @@ function pick(i) {
 }
 
 function commit() {
-  if (!selected.length) return;
+  if (modal.open || !selected.length) return;
   const result = session.play(selected);
   selected = [];
   if (!result) {
@@ -125,19 +122,21 @@ function commit() {
     message('등차·등비수열 3개 이상을 연결해 주세요');
     return;
   }
-  hints = [];
   beep();
   render();
   message(`${result.sequence} 팡!`, true);
   if (result.status === 'cleared') {
-    progress[session.index] = true;
-    try { localStorage.setItem(storageKey, JSON.stringify(progress)); } catch {}
+    progress[session.level.key] = true;
+    try { saveProgress(localStorage, progress); } catch {}
     beep(true);
     showResult(true);
   } else if (result.status === 'failed') showResult(false);
 }
 
 function show(content, isResult = false) {
+  dragging = false;
+  selected = [];
+  if (!$('game').hidden) paint();
   resultOpen = isResult;
   $('close-modal').hidden = isResult;
   $('modal-content').innerHTML = content;
@@ -160,7 +159,6 @@ function showResult(won) {
       else load(session.index + 1);
     } else if (session.retry()) {
       selected = [];
-      hints = [];
       showGame();
       message('숫자 3개 이상을 이어 보세요');
     }
@@ -168,11 +166,35 @@ function showResult(won) {
   $('result-home').onclick = showHome;
 }
 
-function picker() {
-  show('<h2 id="modal-title">스테이지 선택</h2><div class="level-grid">' + levels.map((level, i) =>
-    `<button data-stage="${i}" aria-label="스테이지 ${i + 1}${progress[i] ? ', 완료' : ''}" class="${i === session.index ? 'current ' : ''}${progress[i] ? 'done' : ''}">
-      ${String(i + 1).padStart(2, '0')}<small aria-hidden="true">${progress[i] ? '★' : '·'}</small></button>`).join('') + '</div>');
+function picker(activeChapter = session.level.chapter) {
+  const chapter = chapters.find(c => c.id === activeChapter) || chapters[0];
+  const chapterLevels = levels.filter(level => level.chapter === chapter.id);
+  const cleared = chapterLevels.filter(level => progress[level.key]).length;
+  show(`<div class="eyebrow">CHAPTER SELECT</div><h2 id="modal-title">별을 따라, 한 걸음씩</h2>
+    <div class="chapter-tabs" role="group" aria-label="챕터 선택">${chapters.map((c,i) =>
+      `<button data-chapter="${c.id}" aria-label="${i+1}장 ${c.name}" aria-pressed="${c.id === chapter.id}"><span aria-hidden="true">${c.symbol}</span> ${String(i+1).padStart(2,'0')}</button>`).join('')}</div>
+    <div class="chapter-summary"><div><h3>${chapter.name}</h3><p>${chapter.subtitle}</p></div><strong>${cleared}<small> / ${chapterLevels.length}</small></strong></div>
+    <div class="level-grid">${chapterLevels.map(level =>
+      `<button data-stage="${level.id-1}" aria-label="스테이지 ${level.id}, ${level.title}${progress[level.key] ? ', 완료' : ''}" class="${level.id-1 === session.index ? 'current ' : ''}${progress[level.key] ? 'done' : ''}">
+        ${String(level.id).padStart(2,'0')}<small aria-hidden="true">${progress[level.key] ? '★' : '·'}</small></button>`).join('')}</div>`);
   $('modal-content').querySelectorAll('[data-stage]').forEach(button => button.onclick = () => load(+button.dataset.stage));
+  $('modal-content').querySelectorAll('[data-chapter]').forEach(button => button.onclick = () => picker(button.dataset.chapter));
+}
+
+function settings() {
+  const playing = !$('game').hidden;
+  show(`<div class="eyebrow">SEQUENSTAR</div><h2 id="modal-title">설정</h2>
+    <div class="settings-list">
+      <button id="settings-sound" aria-pressed="${sound}">효과음 <span>${sound ? '켜짐' : '꺼짐'}</span></button>
+      ${playing ? '<button id="settings-restart">다시하기 <span>↻</span></button><button id="settings-home">메인화면 <span>⌂</span></button>' : ''}
+      <button id="settings-help">게임 방법 <span>?</span></button>
+    </div>${playing ? '<p class="settings-note">메인화면으로 나가도 현재 판은 유지돼요.</p>' : ''}`);
+  $('settings-sound').onclick = () => { sound = !sound; try { localStorage.setItem('sequenstar-sound', sound ? 'on' : 'off'); } catch {} beep(); settings(); };
+  if (playing) {
+    $('settings-restart').onclick = () => { session.restart(); showGame(); message('처음부터 다시 시작해요'); };
+    $('settings-home').onclick = showHome;
+  }
+  $('settings-help').onclick = help;
 }
 
 function help() {
@@ -181,6 +203,7 @@ function help() {
     <p><b>등차</b>　1 → 3 → 5<br><b>등비</b>　2 → 4 → 8</p>
     <p>남은 횟수 안에 <b>★ 별을 모두</b> 모으면 성공! 타일이 사라지면 위의 타일이 내려와요. 새 타일은 생기지 않아요.</p>
     <p>횟수를 다 쓰거나 연결할 수열이 없으면 실패예요. 실패 화면에서 재도전할 수 있어요.</p>
+    <p>설정 메뉴에서 다시하기와 메인화면 이동을 할 수 있어요.</p>
     <p>시간제한은 없어요. 잘못된 연결은 횟수를 줄이지 않아요.</p>
     <p>키보드: Tab으로 이동하고 Space로 선택한 다음 ‘선택 완료’를 누르세요.</p>`);
 }
@@ -230,31 +253,13 @@ $('board').addEventListener('keydown', event => {
 $('submit').onclick = commit;
 $('start-game').onclick = () => {
   if (session.status === 'playing') { showGame(); message('숫자 3개 이상을 이어 보세요'); }
-  else { const next = levels.findIndex((_, i) => !progress[i]); load(next === -1 ? 0 : next); }
+  else { const next = levels.findIndex(level => !progress[level.key]); load(next === -1 ? 0 : next); }
 };
-$('go-home').onclick = showHome;
-$('stage-picker').onclick = picker;
+$('game-settings').onclick = settings;
+$('home-settings').onclick = settings;
+$('stage-picker').onclick = () => picker();
 $('close-modal').onclick = closeModal;
 modal.addEventListener('cancel', event => { if (resultOpen) event.preventDefault(); });
-$('hint').onclick = () => {
-  if (session.status !== 'playing') return;
-  selected = [];
-  const solution = solve(session.board, session.level.n, session.moves);
-  if (solution?.length) {
-    hints = solution[0];
-    paint();
-    message('힌트: ' + hints.map(i => session.board[i].v).join(' → '));
-  } else { hints = []; paint(); message('힌트를 찾지 못했어요. 다른 연결을 찾아보세요.'); }
-};
-$('help').onclick = help;
 $('home-help').onclick = help;
-document.querySelectorAll('.sound-toggle').forEach(button => button.onclick = () => {
-  sound = !sound;
-  document.querySelectorAll('.sound-toggle').forEach(toggle => {
-    toggle.setAttribute('aria-pressed', String(sound));
-    toggle.setAttribute('aria-label', sound ? '소리 끄기' : '소리 켜기');
-  });
-  beep();
-});
 window.addEventListener('resize', () => { if (!$('game').hidden) paint(); });
 showHome();
