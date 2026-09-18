@@ -16,11 +16,11 @@
   <main class="app-shell">
     <section id="home" class="home-screen" aria-label="시퀀스타 메인화면">
       <div class="home-tools">
-        <button class="icon sound-toggle" aria-label="소리 켜기" aria-pressed="false">♪</button>
+        <button id="home-settings" class="icon" aria-label="설정">⚙</button>
       </div>
       <div class="ambient" aria-hidden="true"><span>✦</span><span>✧</span><span>✦</span><span>·</span><span>✧</span></div>
       <div class="welcome-card">
-        <div class="hero-mascot"><img src="./mango.png" alt="금빛 별과 애플망고 캐릭터" width="148" height="148"></div>
+        <div class="series-label">SEQUENCE SERIES</div><div class="hero-mascot"><img src="./mango-v2.png" alt="금빛 별과 애플망고 캐릭터" width="98" height="98"></div>
         <div class="title-group">
           <h1 class="welcome-logo" aria-label="시퀀스타"><svg viewBox="0 0 560 170" role="img" aria-hidden="true">
                   <defs>
@@ -56,7 +56,14 @@
                 </svg></h1>
           <div class="english-title" aria-hidden="true">SEQUEN<span>STAR</span></div>
         </div>
-        <div class="home-progress"><span>클리어</span><strong id="home-cleared">0</strong><span id="home-total">/ 8</span><span class="gold" aria-hidden="true">★</span></div>
+        <p class="welcome-tagline">차근차근 연결하고, 반짝이는 별을 모아요.</p>
+        <div class="home-progress"><span>클리어</span><strong id="home-cleared">0</strong><span id="home-total">/ 30</span><span class="gold" aria-hidden="true">★</span></div>
+        <div class="how-to-play" aria-label="기본 규칙">
+          <div class="htp-title">HOW TO PLAY</div>
+          <p><span>①</span> 숫자 3개 이상을 수열로 연결해요.</p>
+          <p><span>②</span> 남은 횟수 안에 모든 별을 모아요.</p>
+          <p><span>③</span> 시간제한 없이, 천천히 생각해요.</p>
+        </div>
         <div class="home-actions">
           <button id="start-game" class="start-button">시작하기 <span aria-hidden="true">▶</span></button>
           <div class="home-sub-actions">
@@ -69,21 +76,22 @@
 
     <section id="game" class="game" aria-label="퍼즐 플레이" hidden>
       <header class="game-header">
-        <button id="go-home" class="icon" aria-label="메인으로">‹</button>
+        <span class="series-mark">SEQUENCE<br>SERIES</span>
         <span class="small-logo">SEQUEN<span>STAR</span></span>
-        <button class="icon sound-toggle" aria-label="소리 켜기" aria-pressed="false">♪</button>
+        <button id="game-settings" class="icon" aria-label="설정">⚙</button>
       </header>
-      <div class="stage-head"><h2>STAGE <span id="stage-no">01</span></h2><button id="help" class="icon" aria-label="게임 방법">?</button></div>
+      <div class="stage-head"><div><p id="chapter-label" class="eyebrow"></p><h2>STAGE <span id="stage-no">01</span></h2></div><span id="stage-title"></span></div>
       <section class="stats" aria-label="게임 현황">
         <div><span>모은 별</span><strong><b class="gold">★</b> <span id="star-count">0 / 4</span></strong></div>
         <div><span>남은 횟수</span><strong id="moves">2</strong></div>
       </section>
+      <p id="lesson" class="lesson" hidden></p>
       <div class="board-shell">
         <div id="board" class="board" aria-label="수열 퍼즐판"></div>
         <svg id="lines" aria-hidden="true"><polyline/></svg>
       </div>
       <div class="feedback" id="feedback" role="status" aria-live="polite">숫자 3개 이상을 이어 보세요</div>
-      <div class="game-actions"><button id="hint"><span aria-hidden="true">✧</span> 힌트</button></div>
+
       <button id="submit" class="primary" hidden>선택 완료</button>
     </section>
   </main>
