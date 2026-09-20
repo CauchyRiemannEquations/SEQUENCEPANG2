@@ -1,7 +1,7 @@
 import { kind, adjacent, stars } from './engine.js';
 import { levels } from './levels.js';
 import { GameSession } from './session.js';
-import { readProgress, saveProgress, restoreRun, saveRun, nextStageIndex, resetProgress } from './progress.js';
+import { readProgress, saveProgress, restoreRun, saveRun, nextStageIndex, resetProgress, campaignComplete } from './progress.js';
 
 const $ = id => document.getElementById(id);
 let session;
@@ -50,15 +50,18 @@ function showHome() {
   selected = [];
   $('home').hidden = false;
   $('game').hidden = true;
+  $('coming-soon').hidden = true;
   $('home-cleared').textContent = levels.filter(level => progress[level.key] === true).length;
   $('home-total').textContent = `/ ${levels.length}`;
   const next = ['playing', 'failed'].includes(session.status) ? session.index : nextStageIndex(levels, progress);
-  $('resume-note').textContent = session.status === 'playing' || next > 0 ? `STAGE ${String(next + 1).padStart(2, '0')}에서 이어서` : (levels.every(l => progress[l.key]) ? '모든 별을 모았어요! 다시 도전해 볼까요?' : '첫 번째 별을 만나러 가요');
+  $('resume-note').textContent = session.status === 'playing' || next > 0 ? `STAGE ${String(next + 1).padStart(2, '0')}에서 이어서` : '첫 번째 별을 만나러 가요';
+  if (campaignComplete(levels, progress)) $('resume-note').textContent = '모든 별을 모았어요! 다음 스테이지를 준비 중이에요';
 }
 
 function showGame() {
   closeModal();
   $('home').hidden = true;
+  $('coming-soon').hidden = true;
   $('game').hidden = false;
   render();
 }
@@ -182,20 +185,34 @@ function show(content, isResult = false) {
   if (!modal.open) modal.showModal();
 }
 
+function showComingSoon() {
+  closeModal();
+  dragging = false;
+  selected = [];
+  $('home').hidden = true;
+  $('game').hidden = true;
+  $('coming-soon').hidden = false;
+  $('complete-count').textContent = `${levels.length} STAGES CLEAR`;
+  $('complete-copy').textContent = `준비된 ${levels.length}개의 스테이지를 모두 클리어했어요!`;
+  // No old replay may take priority over newly released stages on a later visit.
+  session = new GameSession(levels);
+  persistRun();
+  $('coming-title').focus({ preventScroll: true });
+}
+
 function showResult(won) {
-  const finalStage = session.index === levels.length - 1;
+  if (won && session.index === levels.length - 1) { showComingSoon(); return; }
   show(`<div class="result-content ${won ? 'cleared' : 'failed'}">
     <div class="result-stage">STAGE ${String(session.index + 1).padStart(2, '0')}</div>
     <div class="result-symbol" aria-hidden="true">${won ? '★ ★ ★' : '☆'}</div>
     <h2 id="modal-title">${won ? '성공!' : '실패!'}</h2>
-    <p>${won ? (finalStage ? '50개의 스테이지, 모든 별을 모았어요!' : '별을 모두 모았어요.') : (session.moves === 0 ? '남은 횟수를 모두 썼어요.' : '더 이상 연결할 수 없어요.')}</p>
-    <button class="primary" id="result-action">${won ? (finalStage ? '처음부터 다시 즐기기' : '다음 스테이지') : '재도전'}</button>
+    <p>${won ? '별을 모두 모았어요.' : (session.moves === 0 ? '남은 횟수를 모두 썼어요.' : '더 이상 연결할 수 없어요.')}</p>
+    <button class="primary" id="result-action">${won ? '다음 스테이지' : '재도전'}</button>
     <button class="secondary" id="result-home">메인으로</button>
   </div>`, true);
   $('result-action').onclick = () => {
     if (won) {
-      if (finalStage) load(0);
-      else load(session.index + 1);
+      load(session.index + 1);
     } else if (session.retry()) {
       persistRun();
       selected = [];
@@ -314,12 +331,14 @@ $('board').addEventListener('keydown', event => {
 });
 $('submit').onclick = commit;
 $('start-game').onclick = () => {
+  if (campaignComplete(levels, progress)) { showComingSoon(); return; }
   if (['playing', 'failed'].includes(session.status)) load(session.index);
   else load(nextStageIndex(levels, progress));
 };
 $('game-settings').onclick = settings;
 $('home-settings').onclick = settings;
 $('game-home').onclick = showHome;
+$('coming-home').onclick = showHome;
 $('close-modal').onclick = closeModal;
 modal.addEventListener('cancel', event => { if (resultOpen) event.preventDefault(); });
 $('home-help').onclick = () => help();

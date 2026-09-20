@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { GameSession } from '../dist/session.js';
 import { levels } from '../dist/levels.js';
 import { solveDetailed } from '../dist/engine.js';
-import { saveRun, restoreRun, runKey, readProgress, saveProgress, progressKey, nextStageIndex, resetProgress } from '../dist/progress.js';
+import { saveRun, restoreRun, runKey, readProgress, saveProgress, progressKey, nextStageIndex, resetProgress, campaignComplete } from '../dist/progress.js';
 const storage=()=>{const data=new Map();return {getItem:k=>data.get(k)??null,setItem:(k,v)=>data.set(k,v),removeItem:k=>data.delete(k)};};
 
 test('every stage restarts with its original board and full moves after leaving mid-puzzle',()=>{
@@ -83,4 +83,17 @@ test('reset removes current, legacy and active progress without touching prefere
 test('reset reports unavailable storage instead of claiming success',()=>{
   const blocked={setItem:()=>{throw Error('blocked')},removeItem:()=>{throw Error('blocked')}};
   assert.equal(resetProgress(blocked),false);
+});
+
+
+test('campaign completion waits for every stage and reopens when new stages are released',()=>{
+  const progress=Object.fromEntries(levels.slice(0,-1).map(level=>[level.key,true]));
+  assert.equal(campaignComplete(levels,progress),false);
+  progress[levels.at(-1).key]=true;
+  assert.equal(campaignComplete(levels,progress),true);
+  const expanded=[...levels,{key:'future-stage-51'}];
+  assert.equal(campaignComplete(expanded,progress),false);
+  assert.equal(nextStageIndex(expanded,progress),50);
+  assert.equal(campaignComplete(levels,{}),false);
+  assert.equal(campaignComplete([],{}),false);
 });

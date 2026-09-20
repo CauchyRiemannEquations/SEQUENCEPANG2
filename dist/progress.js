@@ -40,6 +40,10 @@ export function restoreRun(storage, levels) {
   } catch { return null; }
 }
 
+export function campaignComplete(levels, progress) {
+  return levels.length > 0 && levels.every(level => progress[level.key] === true);
+}
+
 export function nextStageIndex(levels, progress) {
   const next = levels.findIndex(level => progress[level.key] !== true);
   return next < 0 ? 0 : next;
