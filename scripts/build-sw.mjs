@@ -13,6 +13,9 @@ for (const directory of ['icons', 'fonts']) {
 files.sort();
 const template = await readFile(new URL('./sw-template.js', import.meta.url), 'utf8');
 const hash = createHash('sha256').update(template);
+// CacheStorage retains response headers too. Refresh cached pages when the
+// hosting policy changes, even if none of the game assets changed.
+hash.update(await readFile(new URL('../vercel.json', import.meta.url)));
 for (const name of files) hash.update(name).update(await readFile(new URL(name, root)));
 const version = hash.digest('hex').slice(0, 16);
 const output = template.replace('__VERSION__', version).replace('__ASSETS__', JSON.stringify(files.map(f => './' + f), null, 2));

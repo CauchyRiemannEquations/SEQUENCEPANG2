@@ -6,6 +6,7 @@ import { readFile } from 'node:fs/promises';
 const root = new URL('../dist/', import.meta.url);
 const code = await readFile(new URL('sw.js', root), 'utf8');
 const origin = 'https://game.example/';
+const hosting = JSON.parse(await readFile(new URL('../vercel.json', import.meta.url)));
 
 function worker() {
   const handlers = {}, stores = new Map(), state = { online: true, claimed: false, skipped: false, failAsset: null };
@@ -14,7 +15,13 @@ function worker() {
     if (!state.online) throw Error('offline');
     const path = new URL(key(request)).pathname.slice(1);
     if (path === state.failAsset) throw Error('download failed');
-    return new Response(await readFile(new URL(path, root)));
+    const headers = new Headers();
+    for (const rule of hosting.headers) {
+      if (rule.source === '/(.*)' || rule.source === '/' + path) {
+        for (const { key, value } of rule.headers) headers.set(key, value);
+      }
+    }
+    return new Response(await readFile(new URL(path, root)), { headers });
   };
   const caches = {
     async open(name) {
@@ -69,6 +76,10 @@ test('after one successful install, navigation, all game modules, images and fon
   assert.equal(w.state.claimed, true);
   w.state.online = false;
   const page = await w.emit('fetch', {request:{url:origin + '?source=homescreen',method:'GET',mode:'navigate'}});
+  assert.match(page.headers.get('content-security-policy'), /script-src 'self'/);
+  assert.match(page.headers.get('content-security-policy'), /frame-ancestors 'none'/);
+  assert.equal(page.headers.get('x-frame-options'), 'DENY', 'offline navigation retains framing protection');
+  assert.equal(page.headers.get('x-content-type-options'), 'nosniff');
   assert.match(await page.text(), /시퀀스팡2/);
   for (const store of w.stores.values()) {
     for (const url of store.keys()) {

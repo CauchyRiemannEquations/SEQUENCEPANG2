@@ -77,3 +77,13 @@ Node 20 이상을 사용합니다. `dist/`는 별도 빌드 없이 정적 호스
 - `dist/icons/`는 기존 로고를 참조해 내장 이미지 생성 도구로 제작한 망고·별·숫자 2 아이콘의 기기별 출력 파일입니다. 생성 프롬프트: 기존 로고의 귀여운 망고 캐릭터와 3D 질감을 유지하고 숫자 2가 새겨진 금색 별을 든 정사각형 앱 아이콘. 짙은 초록 배경, 작은 크기에서 읽히는 단순한 구성, 글자와 테두리 제외.
 
 설치 기준 참고: [MDN PWA 설치](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable).
+
+## 보안 응답 헤더
+
+`vercel.json`은 모든 경로에 CSP, 프레임 삽입 차단, MIME 추측 방지, Referrer-Policy, Permissions-Policy를 설정합니다. 게임 스크립트·이미지·폰트·서비스 워커는 같은 출처만 허용하며 인라인 스크립트와 eval은 허용하지 않습니다. 카메라·마이크·위치·결제·USB 권한도 사용하지 않습니다.
+
+게임판 크기와 낙하 위치는 JavaScript의 개별 style 속성으로 지정하므로 인라인 스타일 속성 허용 없이 동작합니다([MDN style-src-attr](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/style-src-attr)). 외부 리소스나 API를 추가할 때는 필요한 출처만 정책에 추가하고 다시 확인하세요.
+
+`vercel.json`도 PWA 캐시 버전에 반영합니다. 헤더 변경 후에도 `npm run build:pwa`를 실행하며, 기존 설치 앱은 새 서비스 워커가 활성화된 뒤 갱신된 응답 헤더를 사용합니다. 기존 탭을 강제 종료하거나 진행 기록을 초기화하지 않습니다. Vercel에서 제공하는 HSTS와 기존 manifest·서비스 워커 캐시 정책은 유지합니다.
+
+이 설정은 Vercel 배포 시 적용됩니다. 단순 개발 서버인 `npm start`는 Vercel 헤더 규칙을 자동 적용하지 않으므로 실제 헤더 검사는 해당 규칙을 적용한 검증 서버 또는 배포 응답에서 해야 합니다.
