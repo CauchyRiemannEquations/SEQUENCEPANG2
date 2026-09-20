@@ -11,6 +11,9 @@ dialog{color:var(--cream);background:linear-gradient(145deg,#13513e,#042d23);bor
 @media(max-height:720px){.home-screen{padding-top:16px}.home-content{padding-bottom:0}.brand-home{max-width:360px}.home-tagline{margin-bottom:15px}.home-actions{margin-top:22px}.start-button{padding:15px}.home-footer{padding-top:3px}.game-header{margin-top:-10px}.brand-game{max-width:185px}.game-status{margin-bottom:12px}.stage-badge,.stat{min-height:67px}.game-help{margin-top:3px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.demo-stroke{transform:scaleX(1)}.demo-hand{left:74%}.demo-tile{background:#ffdc6c}.motion-caption{display:block;font-size:13px;text-align:center;color:#c5d8b9;margin-top:10px}.demo-toggle{display:none}}
 
+/* An opaque backdrop lets the black-matted logo blend inside the isolated shell. */
+.app-shell{background:radial-gradient(ellipse at 50% 30%,#0c503b,#042c23 90%)}
+
 /* Compact mobile layout; the supplied black-matted artwork blends on screen. */
 .brand{mix-blend-mode:screen;mask-image:none;-webkit-mask-image:none}
 .brand img{object-fit:cover;mix-blend-mode:normal}
