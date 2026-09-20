@@ -1,4 +1,5 @@
 import { campaignData } from './campaign-data.js';
+import { expansionData } from './expansion-data.js';
 
 const specs = [
   [4,2,[1,2,3,8, 7,9,5,2, 2,4,6,9, 9,5,8,7],[0,2,8,10]],
@@ -8,6 +9,8 @@ export const chapters = [
   { id: 'first', name: '첫 번째 별', subtitle: '연결의 즐거움을 알아가요', symbol: '✦' },
   { id: 'grove', name: '망고 숲', subtitle: '나만의 수열을 찾아요', symbol: '❋' },
   { id: 'orbit', name: '별의 궤도', subtitle: '다음 움직임을 생각해요', symbol: '✧' },
+  { id: 'weave', name: '별의 갈림길', subtitle: '남겨 둔 숫자를 다시 만나요', symbol: '✶' },
+  { id: 'summit', name: '별의 정상', subtitle: '마지막 연결까지 내다봐요', symbol: '✷' },
 ];
 
 const tutorials = [
@@ -25,8 +28,10 @@ const make = (n, moves, values, ss, key, extra) => ({ n, moves, key, ...extra,
   board: values.map((v, j) => v === null ? null : ({ v, star: ss.includes(j), id: `${key}-${j}` })) });
 const originalNames = ['두 번의 연결', '새로운 간격'];
 const campaignNames = ['갈림길', '남겨 둔 숫자', '연결의 순서', '두 가지 수열', '한 수 먼저', '숲의 마지막 길', '연쇄 낙하', '엇갈린 수열', '남겨야 할 별', '숲의 미로', '새로운 궤도', '교차하는 길', '별의 자리', '네 번의 생각', '다섯 걸음', '멀리 있는 별', '빈자리의 의미', '이어지는 별', '마지막 갈림길', '별자리 완성'];
+const expansionNames = ['다시 한 걸음', '두 가지 간격', '빈손의 시작', '겹친 궤도', '첫 번째 고개', '작은 쉼표', '곱과 차', '기다리는 별', '엇갈린 낙하', '두 번째 고개', '작은 별밭', '바뀌는 간격', '보이지 않는 길', '다섯 번의 선택', '세 번째 고개', '잠깐의 여유', '맞물린 수열', '마지막 준비', '정상으로', '쉰 번째 별'];
 export const levels = [
   ...tutorials.map(([n,m,v,s,title,lesson], i) => make(n,m,v,s,`intro-${i+1}`, { chapter: 'first', title, lesson, objective: 'tutorial' })),
   ...specs.map(([n,m,v,s], i) => make(n,m,v,s,`original-${i+1}`, { chapter: 'first', title: originalNames[i], legacyIndex: i, objective: 'practice', ...(i === 0 ? { lesson: '타일을 지우면 위의 숫자가 내려와요. 새 타일은 생기지 않아요.' } : {}) })),
   ...campaignData.map((l,i) => make(l.n,l.moves,l.values,l.stars,`complex-v3-${i+11}`, { chapter: i < 10 ? 'grove' : 'orbit', title: campaignNames[i], objective: l.objective })),
+  ...expansionData.map((l,i) => make(l.n,l.moves,l.values,l.stars,`expansion-v1-${i+31}`, { chapter: i < 10 ? 'weave' : 'summit', title: expansionNames[i], objective: l.objective })),
 ].map((level, i) => ({ ...level, id: i + 1 }));

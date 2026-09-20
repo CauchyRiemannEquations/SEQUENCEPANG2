@@ -7,11 +7,11 @@ import { analyze } from '../scripts/generate-campaign.mjs';
 import { campaignData } from '../dist/campaign-data.js';
 import { GameSession } from '../dist/session.js';
 
-test('campaign has 30 distinct boards and stable identities across three chapters', () => {
-  assert.equal(levels.length, 30);
-  assert.equal(new Set(levels.map(l => l.key)).size, 30);
+test('campaign has 50 distinct boards and stable identities across five chapters', () => {
+  assert.equal(levels.length, 50);
+  assert.equal(new Set(levels.map(l => l.key)).size, 50);
   const boards = levels.map(l => JSON.stringify(l.board.map(c => [c.v, c.star])));
-  assert.equal(new Set(boards).size, 30);
+  assert.equal(new Set(boards).size, 50);
   for (const level of levels) {
     assert.ok(chapters.some(c => c.id === level.chapter));
     assert.equal(level.board.length, level.n ** 2);
@@ -20,10 +20,10 @@ test('campaign has 30 distinct boards and stable identities across three chapter
 });
 
 test('only the first ten stages are introductory, with ten stages per chapter', () => {
-  assert.deepEqual(chapters.map(c => levels.filter(l => l.chapter === c.id).length), [10,10,10]);
+  assert.deepEqual(chapters.map(c => levels.filter(l => l.chapter === c.id).length), [10,10,10,10,10]);
   assert.ok(levels.slice(0,10).every(l => l.moves <= 2));
   assert.ok(levels.slice(10).every(l => l.moves >= 3));
-  assert.ok(levels.slice(24).every(l => l.moves === 5));
+  assert.ok(levels.slice(24,30).every(l => l.moves === 5));
 });
 for (const [i, data] of campaignData.entries()) {
   const level = levels[i+10];
