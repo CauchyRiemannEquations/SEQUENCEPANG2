@@ -10,3 +10,35 @@ dialog{color:var(--cream);background:linear-gradient(145deg,#13513e,#042d23);bor
 @media(max-width:359px){.home-screen{padding-inline:18px}.home-tagline{font-size:15px}.home-actions{margin-top:24px}.home-progress{font-size:12px;gap:5px}.game{padding-inline:12px}.game-header .icon{width:38px;height:38px;font-size:24px}.game-status{gap:6px}.stat>span{font-size:12px}.stage-badge,.stat{min-height:68px;border-radius:15px}.star-stat strong{font-size:19px}.board-frame{padding:7px;border-radius:27px}.board-shell{padding:7px;border-radius:18px}.board{gap:5px}.tile{font-size:clamp(26px,9vw,35px)}.tile .star{font-size:19px;right:-3px;top:-4px}.feedback{font-size:14px;margin-inline:2px}.contact-email{font-size:12px}dialog{padding:20px}.lesson{font-size:13px}}
 @media(max-height:720px){.home-screen{padding-top:16px}.home-content{padding-bottom:0}.brand-home{max-width:360px}.home-tagline{margin-bottom:15px}.home-actions{margin-top:22px}.start-button{padding:15px}.home-footer{padding-top:3px}.game-header{margin-top:-10px}.brand-game{max-width:185px}.game-status{margin-bottom:12px}.stage-badge,.stat{min-height:67px}.game-help{margin-top:3px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.demo-stroke{transform:scaleX(1)}.demo-hand{left:74%}.demo-tile{background:#ffdc6c}.motion-caption{display:block;font-size:13px;text-align:center;color:#c5d8b9;margin-top:10px}.demo-toggle{display:none}}
+
+/* Compact mobile layout; the supplied black-matted artwork blends on screen. */
+.brand{mix-blend-mode:screen;mask-image:none;-webkit-mask-image:none}
+.brand img{object-fit:cover;mix-blend-mode:normal}
+.home-screen{min-height:100svh;padding:calc(12px + env(safe-area-inset-top)) 22px calc(18px + env(safe-area-inset-bottom))}
+.home-tools{height:40px}.home-tools .icon{width:40px;height:40px;font-size:25px}
+.home-content{justify-content:center;padding:0 0 25px;gap:0}
+.brand-home{width:min(100%,320px,calc((100svh - 292px)*1.62));min-width:190px;aspect-ratio:1.62;max-width:320px}
+.home-tagline{font-size:15px;margin:8px 0 13px}
+.home-progress{padding:7px 13px;font-size:13px}.home-progress strong{font-size:17px}
+.home-actions{margin-top:20px;max-width:310px}.start-button{font-size:26px;padding:15px 22px;border-radius:19px}
+.resume-note{font-size:13px;min-height:20px;margin-top:12px}
+.home-links{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:5px}
+.home-links .text-button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;white-space:nowrap;text-decoration:none;font-size:14px;padding:8px 9px}
+.home-links .text-button>span{flex:none;font-size:13px;width:20px;height:20px}
+.home-links .contact-button{color:#b9d1b0}
+.game{min-height:100svh;padding:calc(6px + env(safe-area-inset-top)) 14px calc(8px + env(safe-area-inset-bottom))}
+.game-header{margin:0 0 6px;height:80px;gap:6px}.brand-game{width:136px;max-width:136px;aspect-ratio:1.62}
+.game-header .icon{width:40px;height:40px;font-size:25px}
+.game-status{margin-bottom:10px;gap:7px}.stage-badge,.stat{min-height:58px;border-radius:14px;gap:2px}
+.stage-badge>span{font-size:10px}.stage-badge strong,.stat strong{font-size:25px}.stat>span{font-size:12px}.star-stat strong{font-size:21px}.star-stat .gold{font-size:23px}
+.lesson{padding:8px 11px;margin-bottom:9px;font-size:13px;line-height:1.5}
+.board-frame{margin-inline:auto;max-width:100%;padding:7px;border-radius:27px;flex:none}
+.board-shell{padding:7px;border-radius:18px;container-type:inline-size}.board{gap:6px}
+.tile{font-size:clamp(26px,12cqw,49px)}.tile .star{font-size:clamp(17px,6cqw,24px)}
+.feedback{min-height:40px;padding:9px 7px;margin:11px 4px 0;border-radius:14px;font-size:14px;line-height:1.4}
+.game-help{margin:3px auto 0;padding:8px 12px;font-size:13px;min-height:36px}.game-help>span{width:19px;height:19px;font-size:13px}
+.game>.primary{margin-top:10px;padding:10px;font-size:17px}
+.settings-list .reset-setting{color:#ffcc9d}.reset-copy{text-align:center}.reset-error{margin-top:14px;color:#ffc295}
+@media(max-width:359px){.home-screen{padding-inline:18px}.home-links{gap:3px}.home-links .text-button{font-size:13px;padding-inline:7px}.game{padding-inline:10px}.game-header{height:72px}.brand-game{width:122px}.game-status{gap:5px}.board{gap:5px}.tile .star{right:-2px}.star-stat strong{font-size:19px}}
+@media(max-height:620px){.home-content{padding-bottom:0}.home-actions{margin-top:14px}.home-tagline{margin-block:5px 10px}.game-header{height:64px}.brand-game{width:108px}.game-status{margin-bottom:8px}.stage-badge,.stat{min-height:52px}.lesson{font-size:12px;margin-bottom:7px}.feedback{margin-top:9px}}
+@media(orientation:landscape) and (max-height:500px){.home-content{padding-top:5px}.brand-home{min-width:140px;width:160px}.home-screen{height:auto}.home-tools{position:absolute;right:15px;top:12px}.home-actions{margin-top:10px}.home-tagline{margin-block:3px 7px}.start-button{padding-block:10px}.resume-note{margin-top:8px}}

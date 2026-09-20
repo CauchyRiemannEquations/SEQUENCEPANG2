@@ -49,3 +49,14 @@ export function nextStageIndex(levels, progress) {
   const next = levels.findIndex(level => progress[level.key] !== true);
   return next < 0 ? 0 : next;
 }
+
+// Reset this game's progress only; unrelated site data and sound preferences stay.
+// Write an empty current record first so legacy completion cannot be reimported.
+export function resetProgress(storage) {
+  try {
+    storage.setItem(progressKey, '{}');
+    storage.removeItem(runKey);
+    storage.removeItem('sequencepang2-v1');
+    return true;
+  } catch { return false; }
+}

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { GameSession } from '../dist/session.js';
 import { levels } from '../dist/levels.js';
 import { solveDetailed, paths } from '../dist/engine.js';
-import { saveRun, restoreRun, runKey, readProgress, saveProgress, progressKey, nextStageIndex } from '../dist/progress.js';
+import { saveRun, restoreRun, runKey, readProgress, saveProgress, progressKey, nextStageIndex, resetProgress } from '../dist/progress.js';
 const storage=()=>{const data=new Map();return {getItem:k=>data.get(k)??null,setItem:(k,v)=>data.set(k,v),removeItem:k=>data.delete(k)};};
 
 test('every stage resumes the exact remaining board and move count after a refresh',()=>{
@@ -51,4 +51,24 @@ test('stage identity, not position, is used to resume and invalid moves never en
   const reordered=[...levels].reverse();const restored=restoreRun(store,reordered);
   assert.equal(restored.level.key,levels[16].key);
   assert.deepEqual(restored.board,game.board);
+});
+
+
+test('reset removes current, legacy and active progress without touching preferences or other data',()=>{
+  const store=storage(),game=new GameSession(levels);game.start(8);game.play([0,1,2]);
+  saveRun(store,game);saveProgress(store,{[levels[0].key]:true});
+  store.setItem('sequencepang2-v1',JSON.stringify({0:true,1:true}));
+  store.setItem('sequencepang2-sound','on');store.setItem('another-game','keep');
+  assert.equal(resetProgress(store),true);
+  assert.deepEqual(readProgress(store,levels),{});
+  assert.equal(restoreRun(store,levels),null);
+  assert.equal(nextStageIndex(levels,readProgress(store,levels)),0);
+  assert.equal(store.getItem('sequencepang2-v1'),null);
+  assert.equal(store.getItem('sequencepang2-sound'),'on');
+  assert.equal(store.getItem('another-game'),'keep');
+  assert.equal(resetProgress(store),true);
+});
+test('reset reports unavailable storage instead of claiming success',()=>{
+  const blocked={setItem:()=>{throw Error('blocked')},removeItem:()=>{throw Error('blocked')}};
+  assert.equal(resetProgress(blocked),false);
 });

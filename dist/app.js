@@ -1,7 +1,7 @@
 import { kind, adjacent, stars } from './engine.js';
 import { levels } from './levels.js';
 import { GameSession } from './session.js';
-import { readProgress, saveProgress, restoreRun, saveRun, nextStageIndex } from './progress.js';
+import { readProgress, saveProgress, restoreRun, saveRun, nextStageIndex, resetProgress } from './progress.js';
 
 const $ = id => document.getElementById(id);
 let session;
@@ -86,6 +86,8 @@ function render(previousBoard) {
       aria-label="${Math.floor(i / level.n) + 1}행 ${i % level.n + 1}열, ${cell.v}${cell.star ? ', 별' : ''}" aria-pressed="false">
       <span>${cell.v}</span>${cell.star ? '<span class="star" aria-hidden="true">★</span>' : ''}
     </button>` : '<div class="empty" aria-hidden="true"></div>').join('');
+  $('submit').hidden = selected.length < 3 || dragging;
+  fitBoard();
   if (previousBoard && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     for (const tile of $('board').querySelectorAll('[data-i]')) {
       const i = +tile.dataset.i, before = previousBoard.findIndex(c => c?.id === board[i].id);
@@ -100,7 +102,29 @@ function render(previousBoard) {
   paint();
 }
 
+// Size against the visible viewport and actual text height, including tutorials.
+// A small minimum keeps numbers touchable; tiny landscape windows may scroll.
+function fitBoard() {
+  if ($('game').hidden) return;
+  const game = $('game'), css = getComputedStyle(game);
+  const paddingY = parseFloat(css.paddingTop) + parseFloat(css.paddingBottom);
+  const paddingX = parseFloat(css.paddingLeft) + parseFloat(css.paddingRight);
+  let controls = 0;
+  for (const element of game.children) {
+    if (element.classList.contains('board-frame') || element.hidden) continue;
+    const style = getComputedStyle(element);
+    if (style.display === 'none') continue;
+    controls += element.getBoundingClientRect().height + parseFloat(style.marginTop) + parseFloat(style.marginBottom);
+  }
+  const visibleHeight = window.visualViewport?.height || window.innerHeight;
+  const minBoard = session.level.n === 5 ? 250 : 220;
+  const size = Math.floor(Math.min(game.clientWidth - paddingX, Math.max(minBoard, visibleHeight - paddingY - controls - 8)));
+  game.querySelector('.board-frame').style.width = `${size}px`;
+}
+
 function paint() {
+  const showSubmit = selected.length >= 3 && !dragging;
+  if ($('submit').hidden === showSubmit) { $('submit').hidden = !showSubmit; fitBoard(); }
   document.querySelectorAll('.tile').forEach(element => {
     const i = +element.dataset.i;
     element.classList.toggle('selected', selected.includes(i));
@@ -113,7 +137,6 @@ function paint() {
     const bounds = element.getBoundingClientRect();
     return `${bounds.x + bounds.width / 2 - shell.x},${bounds.y + bounds.height / 2 - shell.y}`;
   }).join(' '));
-  $('submit').hidden = selected.length < 3 || dragging;
 }
 
 function pick(i) {
@@ -189,7 +212,8 @@ function settings() {
     <div class="settings-list">
       <button id="settings-sound" aria-pressed="${sound}">효과음 <span>${sound ? '켜짐' : '꺼짐'}</span></button>
       ${playing ? '<button id="settings-restart">다시하기 <span>↻</span></button><button id="settings-home">메인화면 <span>⌂</span></button>' : ''}
-      <button id="settings-help">게임 방법 <span>?</span></button>
+      <button id="settings-help">플레이 방법 <span>?</span></button>
+      <button id="settings-reset" class="reset-setting">게임 초기화 <span>↺</span></button>
     </div>${playing ? '<p class="settings-note">현재 판은 이 기기에 자동으로 저장돼요.</p>' : ''}`);
   $('settings-sound').onclick = () => { sound = !sound; try { localStorage.setItem('sequencepang2-sound', sound ? 'on' : 'off'); } catch {} beep(); settings(); };
   if (playing) {
@@ -197,6 +221,30 @@ function settings() {
     $('settings-home').onclick = showHome;
   }
   $('settings-help').onclick = () => help();
+  $('settings-reset').onclick = confirmReset;
+}
+
+function confirmReset() {
+  show(`<h2 id="modal-title">처음부터 시작할까요?</h2>
+    <p class="reset-copy">클리어 기록과 진행 중인 판을 지우고<br>1스테이지부터 다시 시작해요.</p>
+    <p id="reset-error" class="reset-error" role="alert" hidden></p>
+    <button id="confirm-reset" class="primary">기록 지우고 초기화</button>
+    <button id="cancel-reset" class="secondary">취소</button>`);
+  $('close-modal').hidden = true;
+  $('cancel-reset').onclick = settings;
+  $('confirm-reset').onclick = () => {
+    let reset = false;
+    try { reset = resetProgress(localStorage); } catch {}
+    if (!reset) {
+      $('reset-error').hidden = false;
+      $('reset-error').textContent = '저장소에 접근할 수 없어 초기화하지 못했어요. 브라우저 설정을 확인해 주세요.';
+      return;
+    }
+    progress = {};
+    session = new GameSession(levels);
+    selected = [];
+    showHome();
+  };
 }
 
 function help(active = 'arithmetic') {
@@ -280,5 +328,8 @@ $('close-modal').onclick = closeModal;
 modal.addEventListener('cancel', event => { if (resultOpen) event.preventDefault(); });
 $('home-help').onclick = () => help();
 window.addEventListener('pagehide', persistRun);
-window.addEventListener('resize', () => { if (!$('game').hidden) paint(); });
+function resizeGame() { if (!$('game').hidden) { fitBoard(); paint(); } }
+window.addEventListener('resize', resizeGame);
+window.visualViewport?.addEventListener('resize', resizeGame);
+document.fonts?.ready.then(resizeGame);
 showHome();
