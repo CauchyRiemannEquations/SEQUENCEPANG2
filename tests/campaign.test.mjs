@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import { levels, chapters } from '../dist/levels.js';
 import { paths, remove, stars, solveDetailed, valid } from '../dist/engine.js';
 import { readProgress, saveProgress, progressKey } from '../dist/progress.js';
+import { analyze } from '../scripts/generate-campaign.mjs';
+import { campaignData } from '../dist/campaign-data.js';
 import { GameSession } from '../dist/session.js';
 
 test('campaign has 30 distinct boards and stable identities across three chapters', () => {
@@ -17,19 +19,35 @@ test('campaign has 30 distinct boards and stable identities across three chapter
   }
 });
 
-for (const level of levels.filter(l => ['setup', 'order'].includes(l.objective))) {
-  test(`stage ${level.id} requires ${level.moves} moves and its intended opening strategy`, () => {
-    assert.equal(solveDetailed(level.board, level.n, level.moves - 1).status, 'unsolvable');
-    let wins = 0, losses = 0;
-    for (const path of paths(level.board, level.n)) {
-      const result = solveDetailed(remove(level.board, path, level.n), level.n, level.moves - 1);
-      assert.notEqual(result.status, 'budget-exceeded');
-      if (result.status === 'solved') {
-        wins++;
-        if (level.objective === 'setup') assert.equal(path.some(i => level.board[i].star), false);
-      } else losses++;
+test('only the first ten stages are introductory, with ten stages per chapter', () => {
+  assert.deepEqual(chapters.map(c => levels.filter(l => l.chapter === c.id).length), [10,10,10]);
+  assert.ok(levels.slice(0,10).every(l => l.moves <= 2));
+  assert.ok(levels.slice(10).every(l => l.moves >= 3));
+  assert.ok(levels.slice(24).every(l => l.moves === 5));
+});
+for (const [i, data] of campaignData.entries()) {
+  const level = levels[i+10];
+  test(`stage ${level.id}: exact depth, selective openings, gravity and playable solution`, () => {
+    const result = analyze(level.board, level.n, level.moves);
+    assert.ok(result, 'search must finish and rule out every shorter solution');
+    assert.equal(result.winning.length, data.winningFirstMoves);
+    assert.equal(result.openings, data.legalFirstMoves);
+    assert.ok(result.winning.length > 0 && result.winning.length / result.openings <= 0.3);
+    if (level.objective === 'setup') {
+      assert.ok(result.winning.every(w => w.path.every(i => !level.board[i].star)));
     }
-    assert.ok(wins > 0 && losses > 0);
+    const session = new GameSession(levels); session.start(i+10);
+    let shifted = 0;
+    for(const path of data.solution) {
+      const original = path.map(p => level.board.findIndex(c => c.id === session.board[p].id));
+      if(!valid(level.board,original,level.n)) shifted++;
+      assert.ok(valid(session.board,path,level.n));
+      assert.ok(session.play(path));
+    }
+    assert.equal(shifted,data.gravitySteps);
+    assert.ok(shifted >= (i<6?1:2));
+    assert.equal(session.status,'cleared');
+    assert.equal(session.moves,0);
   });
 }
 
@@ -48,11 +66,11 @@ test('solver supports legal sequences longer than seven tiles', () => {
   assert.ok(valid(board, result.solution[0], 3));
 });
 
-test('legacy completion follows the eight original puzzles, not their old stage numbers', () => {
+test('legacy completion follows the retained original puzzles, not their old stage numbers', () => {
   const data = new Map([['sequencepang2-v1', JSON.stringify({0:true,7:true})]]);
   const storage = {getItem: key => data.get(key), setItem: (key,value) => data.set(key,value)};
   const progress = readProgress(storage, levels);
-  assert.deepEqual(progress, {'original-1':true, 'original-8':true});
+  assert.deepEqual(progress, {'original-1':true});
   progress['intro-1'] = true;
   saveProgress(storage, progress);
   assert.ok(data.has(progressKey));
@@ -70,12 +88,17 @@ test('settings restart restores a partially played board and full move count', (
   const session = new GameSession(levels);
   assert.equal(session.restart(), false);
   session.start(20);
-  const solution = solveDetailed(session.board, session.level.n, session.moves).solution;
+  const solution = campaignData[10].solution;
   session.play(solution[0]);
   assert.equal(session.status, 'playing');
-  assert.equal(session.moves, 1);
+  assert.equal(session.moves, levels[20].moves - 1);
   assert.equal(session.restart(), true);
   assert.equal(session.index, 20);
-  assert.equal(session.moves, 2);
+  assert.equal(session.moves, levels[20].moves);
   assert.deepEqual(session.board, levels[20].board);
+});
+
+test('old campaign completion does not mark replacement puzzles cleared', () => {
+  const storage = {getItem: key => key === progressKey ? JSON.stringify({'campaign-17':true,'original-3':true,'intro-1':true,'original-1':true}) : null};
+  assert.deepEqual(readProgress(storage, levels), {'intro-1':true,'original-1':true});
 });

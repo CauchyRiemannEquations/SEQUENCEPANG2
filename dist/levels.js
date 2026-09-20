@@ -1,14 +1,8 @@
 import { campaignData } from './campaign-data.js';
 
-const specs=[
-[4,2,[1,2,3,8, 7,9,5,2, 2,4,6,9, 9,5,8,7],[0,2,8,10]],
-[4,2,[2,5,9,7, 8,4,2,1, 3,6,9,5, 7,2,5,8],[4,7,8,10]],
-[4,3,[1,3,5,7, 9,8,6,2, 2,4,8,9, 6,5,4,3],[0,3,8,10,12,15]],
-[4,3,[1,6,8,3, 7,2,9,5, 8,6,3,7, 4,8,6,4],[0,5,10,12,15]],
-[5,3,[2,4,6,8,9, 9,7,5,3,8, 1,2,4,8,7, 8,3,6,9,2, 5,8,2,6,9],[0,3,5,8,10,13]],
-[5,4,[9,6,3,8,2, 2,4,8,7,5, 1,3,5,7,9, 8,7,6,5,4, 3,8,2,9,6],[0,2,5,7,10,14,15,19]],
-[5,4,[3,6,9,8,5, 8,4,2,1,6, 9,7,5,3,1, 2,4,6,8,7, 6,9,3,5,8],[0,2,5,8,10,14,15,18]],
-[5,5,[1,2,3,4,5, 2,4,8,9,6, 9,7,5,3,1, 8,6,4,2,9, 3,6,9,7,5],[0,4,5,7,10,14,15,18,20,22]]
+const specs = [
+  [4,2,[1,2,3,8, 7,9,5,2, 2,4,6,9, 9,5,8,7],[0,2,8,10]],
+  [4,2,[2,5,9,7, 8,4,2,1, 3,6,9,5, 7,2,5,8],[4,7,8,10]],
 ];
 export const chapters = [
   { id: 'first', name: '첫 번째 별', subtitle: '연결의 즐거움을 알아가요', symbol: '✦' },
@@ -29,10 +23,10 @@ const tutorials = [
 
 const make = (n, moves, values, ss, key, extra) => ({ n, moves, key, ...extra,
   board: values.map((v, j) => v === null ? null : ({ v, star: ss.includes(j), id: `${key}-${j}` })) });
-const originalNames = ['두 번의 연결', '새로운 간격', '세 갈래 길', '숲의 모퉁이', '넓어진 숲', '차곡차곡', '숲속 산책', '망고 숲의 별'];
-const campaignNames = ['갈림길', '남겨 둔 숫자', '연결의 순서', '숲의 마지막 길', '새로운 궤도', '한 칸 아래', '빈자리', '별의 자리', '잠깐 쉬어가기', '다음 연결', '세 번의 생각', '멀리 있는 별', '작은 선택', '이어지는 별'];
+const originalNames = ['두 번의 연결', '새로운 간격'];
+const campaignNames = ['갈림길', '남겨 둔 숫자', '연결의 순서', '두 가지 수열', '한 수 먼저', '숲의 마지막 길', '연쇄 낙하', '엇갈린 수열', '남겨야 할 별', '숲의 미로', '새로운 궤도', '교차하는 길', '별의 자리', '네 번의 생각', '다섯 걸음', '멀리 있는 별', '빈자리의 의미', '이어지는 별', '마지막 갈림길', '별자리 완성'];
 export const levels = [
   ...tutorials.map(([n,m,v,s,title,lesson], i) => make(n,m,v,s,`intro-${i+1}`, { chapter: 'first', title, lesson, objective: 'tutorial' })),
-  ...specs.map(([n,m,v,s], i) => make(n,m,v,s,`original-${i+1}`, { chapter: 'grove', title: originalNames[i], legacyIndex: i, objective: 'practice', ...(i === 0 ? { lesson: '타일을 지우면 위의 숫자가 내려와요. 새 타일은 생기지 않아요.' } : {}) })),
-  ...campaignData.map((l,i) => make(l.n,l.moves,l.values,l.stars,`campaign-${i+17}`, { chapter: i < 4 ? 'grove' : 'orbit', title: campaignNames[i], objective: l.objective })),
+  ...specs.map(([n,m,v,s], i) => make(n,m,v,s,`original-${i+1}`, { chapter: 'first', title: originalNames[i], legacyIndex: i, objective: 'practice', ...(i === 0 ? { lesson: '타일을 지우면 위의 숫자가 내려와요. 새 타일은 생기지 않아요.' } : {}) })),
+  ...campaignData.map((l,i) => make(l.n,l.moves,l.values,l.stars,`complex-v3-${i+11}`, { chapter: i < 10 ? 'grove' : 'orbit', title: campaignNames[i], objective: l.objective })),
 ].map((level, i) => ({ ...level, id: i + 1 }));
