@@ -212,15 +212,13 @@ function settings() {
     <div class="settings-list">
       <button id="settings-sound" aria-pressed="${sound}">효과음 <span>${sound ? '켜짐' : '꺼짐'}</span></button>
       ${playing ? '<button id="settings-restart">다시하기 <span>↻</span></button><button id="settings-home">메인화면 <span>⌂</span></button>' : ''}
-      <button id="settings-help">플레이 방법 <span>?</span></button>
       <button id="settings-reset" class="reset-setting">게임 초기화 <span>↺</span></button>
-    </div>${playing ? '<p class="settings-note">현재 판은 이 기기에 자동으로 저장돼요.</p>' : ''}`);
+    </div>${playing ? '<p class="settings-note">스테이지를 기억해요. 나갔다 돌아오면 그 판을 처음부터 시작해요.</p>' : ''}`);
   $('settings-sound').onclick = () => { sound = !sound; try { localStorage.setItem('sequencepang2-sound', sound ? 'on' : 'off'); } catch {} beep(); settings(); };
   if (playing) {
     $('settings-restart').onclick = () => { session.restart(); persistRun(); showGame(); message('처음부터 다시 시작해요'); };
     $('settings-home').onclick = showHome;
   }
-  $('settings-help').onclick = () => help();
   $('settings-reset').onclick = confirmReset;
 }
 
@@ -316,8 +314,7 @@ $('board').addEventListener('keydown', event => {
 });
 $('submit').onclick = commit;
 $('start-game').onclick = () => {
-  if (session.status === 'playing') { showGame(); message('숫자 3개 이상을 이어 보세요'); }
-  else if (session.status === 'failed') load(session.index);
+  if (['playing', 'failed'].includes(session.status)) load(session.index);
   else load(nextStageIndex(levels, progress));
 };
 $('game-settings').onclick = settings;

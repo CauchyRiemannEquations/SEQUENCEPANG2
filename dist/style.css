@@ -45,3 +45,6 @@ dialog{color:var(--cream);background:linear-gradient(145deg,#13513e,#042d23);bor
 @media(max-width:359px){.home-screen{padding-inline:18px}.home-links{gap:3px}.home-links .text-button{font-size:13px;padding-inline:7px}.game{padding-inline:10px}.game-header{height:72px}.brand-game{width:122px}.game-status{gap:5px}.board{gap:5px}.tile .star{right:-2px}.star-stat strong{font-size:19px}}
 @media(max-height:620px){.home-content{padding-bottom:0}.home-actions{margin-top:14px}.home-tagline{margin-block:5px 10px}.game-header{height:64px}.brand-game{width:108px}.game-status{margin-bottom:8px}.stage-badge,.stat{min-height:52px}.lesson{font-size:12px;margin-bottom:7px}.feedback{margin-top:9px}}
 @media(orientation:landscape) and (max-height:500px){.home-content{padding-top:5px}.brand-home{min-width:140px;width:160px}.home-screen{height:auto}.home-tools{position:absolute;right:15px;top:12px}.home-actions{margin-top:10px}.home-tagline{margin-block:3px 7px}.start-button{padding-block:10px}.resume-note{margin-top:8px}}
+
+/* Soft, chunky numerals match the illustrated tiles, including help demos. */
+.tile,.demo-tile{font-family:'Bagel Fat One','Jua',sans-serif;font-weight:400}

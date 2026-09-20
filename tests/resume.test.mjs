@@ -2,11 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { GameSession } from '../dist/session.js';
 import { levels } from '../dist/levels.js';
-import { solveDetailed, paths } from '../dist/engine.js';
+import { solveDetailed } from '../dist/engine.js';
 import { saveRun, restoreRun, runKey, readProgress, saveProgress, progressKey, nextStageIndex, resetProgress } from '../dist/progress.js';
 const storage=()=>{const data=new Map();return {getItem:k=>data.get(k)??null,setItem:(k,v)=>data.set(k,v),removeItem:k=>data.delete(k)};};
 
-test('every stage resumes the exact remaining board and move count after a refresh',()=>{
+test('every stage restarts with its original board and full moves after leaving mid-puzzle',()=>{
   for(const level of levels){
     const store=storage(),game=new GameSession(levels);game.start(level.id-1);
     saveRun(store,game);
@@ -14,8 +14,9 @@ test('every stage resumes the exact remaining board and move count after a refre
     const plan=solveDetailed(game.board,level.n,game.moves,20000000).solution;
     for(const path of plan.slice(0,-1)){
       game.play(path);saveRun(store,game);const restored=restoreRun(store,levels);
-      assert.deepEqual(restored.board,game.board);assert.equal(restored.moves,game.moves);
-      assert.deepEqual(restored.history,game.history);assert.equal(restored.index,game.index);
+      assert.deepEqual(restored.board,level.board);assert.equal(restored.moves,level.moves);
+      assert.deepEqual(restored.history,[]);assert.equal(restored.index,game.index);
+      assert.deepEqual(JSON.parse(store.getItem(runKey)),{version:2,key:level.key});
     }
   }
 });
@@ -33,9 +34,20 @@ test('failure and refresh restart the same stage without preserving a dead board
   saveRun(store,game);const restored=restoreRun(store,[small]);assert.equal(restored.status,'playing');
   assert.equal(restored.moves,1);assert.deepEqual(restored.board,small.board);assert.deepEqual(restored.history,[]);
 });
-test('corrupt, removed or illegal cached paths cannot create a broken game',()=>{
-  for(const saved of ['{',JSON.stringify({version:8,key:levels[0].key,history:[]}),JSON.stringify({version:1,key:'missing',history:[]}),JSON.stringify({version:1,key:levels[0].key,history:[[0,0,0]]}),JSON.stringify({version:1,key:levels[0].key,history:[[6,7,8],[6,7,8]]})]){
+test('corrupt, removed or unsupported stage records cannot create a broken game',()=>{
+  for(const saved of ['{','null',JSON.stringify({version:8,key:levels[0].key}),JSON.stringify({version:2,key:'missing'}),JSON.stringify({version:2})]){
     const store=storage();store.setItem(runKey,saved);assert.equal(restoreRun(store,levels),null);
+  }
+});
+test('old partial-run saves migrate to the same fresh stage and discard move histories',()=>{
+  for(const history of [[[0,1,2]],[[0,0,0]],'corrupt']) {
+    const store=storage();store.setItem(runKey,JSON.stringify({version:1,key:levels[8].key,history}));
+    saveProgress(store,{[levels[0].key]:true});
+    const restored=restoreRun(store,levels);
+    assert.equal(restored.index,8);assert.deepEqual(restored.board,levels[8].board);
+    assert.equal(restored.moves,levels[8].moves);assert.deepEqual(restored.history,[]);
+    assert.deepEqual(JSON.parse(store.getItem(runKey)),{version:2,key:levels[8].key});
+    assert.deepEqual(readProgress(store,levels),{[levels[0].key]:true});
   }
 });
 test('blocked storage remains playable and old completion keys retain their meaning',()=>{

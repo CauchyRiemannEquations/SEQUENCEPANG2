@@ -23,24 +23,19 @@ export const runKey = 'sequencepang2-active-v1';
 export function saveRun(storage, session) {
   try {
     if (!['playing', 'failed'].includes(session.status)) { storage.removeItem(runKey); return; }
-    storage.setItem(runKey, JSON.stringify({ version: 1, key: session.level.key, history: session.history }));
+    storage.setItem(runKey, JSON.stringify({ version: 2, key: session.level.key }));
   } catch {}
 }
 
-// Replay only legal moves against the current stage definition. Never trust an
-// arbitrary cached board, move counter, or stage index from an older version.
+// Remember the stage only. Old v1 move histories are deliberately discarded.
 export function restoreRun(storage, levels) {
   try {
     const saved = JSON.parse(storage.getItem(runKey) || 'null');
-    if (!saved || saved.version !== 1 || !Array.isArray(saved.history)) return null;
+    if (!saved || ![1, 2].includes(saved.version)) return null;
     const index = levels.findIndex(level => level.key === saved.key);
-    if (index < 0 || saved.history.length > levels[index].moves) return null;
+    if (index < 0) return null;
     const game = new GameSession(levels); game.start(index);
-    for (const path of saved.history) {
-      if (!Array.isArray(path) || path.length > game.board.length || !game.play(path)) return null;
-    }
-    if (game.status === 'cleared') return null;
-    if (game.status === 'failed') game.restart();
+    saveRun(storage, game);
     return game;
   } catch { return null; }
 }
