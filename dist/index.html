@@ -7,17 +7,22 @@
   <meta name="application-name" content="시퀀스팡2">
   <meta name="description" content="숫자를 이어 별을 모으는 수열 퍼즐, 시퀀스팡2.">
   <title>시퀀스팡2 · SEQUENCEPANG 2</title>
-  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Bagel+Fat+One&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/favicon-48.png" type="image/png" sizes="48x48">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" sizes="180x180">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="시퀀스팡2">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="preload" href="./fonts/jua.woff" as="font" type="font/woff" crossorigin>
+  <link rel="preload" href="./fonts/bagel.woff" as="font" type="font/woff" crossorigin>
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
   <main class="app-shell">
     <div class="garden" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><span>✦</span><span>✦</span></div>
     <section id="home" class="home-screen" aria-label="시퀀스팡2 메인화면">
-      <div class="home-tools"><button id="home-settings" class="icon" aria-label="설정">⚙</button></div>
+      <div class="home-tools"><button id="install-app" class="install-button" hidden><span aria-hidden="true">↓</span> 앱 설치</button><button id="home-settings" class="icon" aria-label="설정">⚙</button></div>
       <div class="home-content">
         <h1 class="brand brand-home"><img src="./sequencepang2-logo-v2.jpg" alt="시퀀스팡2" width="1536" height="1152" fetchpriority="high"></h1>
         <p class="home-tagline">숫자를 이어, 별을 모아요!</p>
@@ -29,6 +34,7 @@
             <button id="home-help" class="text-button"><span aria-hidden="true">?</span> 플레이 방법</button>
             <a class="text-button contact-button" href="mailto:cremationmath@gmail.com" aria-label="문의하기"><span aria-hidden="true">✉</span> 문의하기</a>
           </div>
+          <button id="update-app" class="update-button" hidden>새 버전으로 업데이트</button>
         </div>
       </div>
     </section>
@@ -54,6 +60,19 @@
     </section>
   </main>
   <dialog id="modal" aria-labelledby="modal-title"><div id="modal-content"></div><button id="close-modal" class="secondary">닫기</button></dialog>
+  <dialog id="install-dialog" aria-labelledby="install-title">
+    <img class="install-icon" src="./icons/icon-192.png" alt="" width="72" height="72">
+    <h2 id="install-title">홈 화면에서 바로 만나요</h2>
+    <p class="install-intro">시퀀스팡2를 앱처럼 설치해 보세요.</p>
+    <div class="install-guide">
+      <p><b>갤럭시 · 안드로이드</b><br>Chrome 또는 삼성 인터넷의 메뉴에서<br>앱 설치 또는 홈 화면에 추가를 선택하세요.</p>
+      <p><b>아이폰 · 아이패드</b><br>Safari의 공유 버튼을 누른 뒤<br>홈 화면에 추가를 선택하세요.</p>
+      <p><b>컴퓨터</b><br>Chrome · Edge 주소창의 설치 아이콘을 누르세요.</p>
+    </div>
+    <p id="offline-ready" class="install-note" role="status">인터넷에 연결된 상태에서 한 번 열어두면 오프라인 플레이를 준비해요.</p>
+    <button id="close-install" class="secondary">닫기</button>
+  </dialog>
+  <script type="module" src="./pwa.js"></script>
   <script type="module" src="./app.js"></script>
 </body>
 </html>

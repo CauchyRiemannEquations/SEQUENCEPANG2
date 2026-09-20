@@ -1,3 +1,6 @@
+@font-face{font-family:'Jua';src:url('./fonts/jua.woff') format('woff');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:'Bagel Fat One';src:url('./fonts/bagel.woff') format('woff');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:'Outfit';src:url('./fonts/outfit.woff') format('woff');font-style:normal;font-weight:100 900;font-display:swap}
 :root{color-scheme:dark;--forest:#063b2d;--deep:#03281f;--cream:#fff3ce;--gold:#ffd85c;--muted:#a9c6ac;font-family:'Jua',system-ui,sans-serif;color:var(--cream);background:#021e18;font-synthesis:none}
 *{box-sizing:border-box}body{margin:0;min-height:100dvh;background:radial-gradient(ellipse at 50% 20%,#14583e 0,#062e24 50%,#011a15 100%)}button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;color:inherit;cursor:pointer;border:0;touch-action:manipulation}button:disabled{cursor:default}button:focus-visible,a:focus-visible{outline:3px solid #fff4b6;outline-offset:5px}button:active:not(:disabled){transform:translateY(2px)}[hidden]{display:none!important}h1,h2,p{margin:0}button,a{user-select:none}a{color:inherit}button{transition:transform .12s,filter .15s}button:hover{filter:brightness(1.06)}
 .app-shell{position:relative;isolation:isolate;width:min(100%,480px);min-height:100dvh;margin:auto;overflow:hidden;background:radial-gradient(ellipse at 50% 30%,#0c503b00,#042c23b0 90%)}
@@ -48,3 +51,12 @@ dialog{color:var(--cream);background:linear-gradient(145deg,#13513e,#042d23);bor
 
 /* Soft, chunky numerals match the illustrated tiles, including help demos. */
 .tile,.demo-tile{font-family:'Bagel Fat One','Jua',sans-serif;font-weight:400}
+
+.home-tools{align-items:center;gap:12px}.home-tools .icon{margin-left:auto}
+.install-button{display:inline-flex;align-items:center;gap:5px;min-height:40px;padding:7px 12px;border:1px solid #89bb8140;border-radius:20px;background:#033a2b88;color:#d5e7c4;font-size:13px}
+.install-button span{font:800 18px 'Outfit',sans-serif;color:var(--gold)}
+.update-button{margin-top:12px;padding:10px 14px;border:1px solid #e6d06860;border-radius:12px;background:#ffe07c15;color:var(--gold);font-size:13px}
+.install-icon{display:block;margin:0 auto 14px;border-radius:18px}
+#install-dialog h2{font-size:24px;margin-bottom:8px}.install-intro{text-align:center}
+.install-guide{display:grid;gap:14px;margin:20px 0}.install-guide b{color:var(--gold);font-weight:400}
+#install-dialog .install-note{font-size:13px;border-top:1px solid #8eb48740;padding-top:14px;color:#b8d0af}
