@@ -1,6 +1,8 @@
 const installButton = document.getElementById('install-app');
 const installDialog = document.getElementById('install-dialog');
 const updateButton = document.getElementById('update-app');
+const confirmInstall = document.getElementById('confirm-install');
+const installGuide = document.getElementById('install-guide');
 const standalone = window.matchMedia('(display-mode: standalone)');
 let installPrompt, waitingWorker, reloadRequested = false;
 
@@ -19,18 +21,26 @@ window.addEventListener('appinstalled', () => {
   installButton.hidden = true;
   installDialog.close();
 });
-installButton.addEventListener('click', async () => {
+installButton.addEventListener('click', () => {
+  confirmInstall.hidden = !installPrompt;
+  installGuide.hidden = !!installPrompt;
+  installDialog.showModal();
+});
+confirmInstall.addEventListener('click', async () => {
   if (installPrompt) {
     const prompt = installPrompt;
     installPrompt = null;
     try {
       await prompt.prompt();
       const choice = await prompt.userChoice;
-      if (choice.outcome === 'accepted') installButton.hidden = true;
-      return;
+      if (choice.outcome === 'accepted') {
+        installButton.hidden = true;
+        installDialog.close();
+      }
     } catch { /* Browser declined the prompt; offer manual instructions. */ }
   }
-  installDialog.showModal();
+  confirmInstall.hidden = true;
+  installGuide.hidden = false;
 });
 document.getElementById('close-install').addEventListener('click', () => installDialog.close());
 
