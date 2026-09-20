@@ -1,17 +1,20 @@
 import { kind, adjacent, stars } from './engine.js';
-import { levels, chapters } from './levels.js';
+import { levels } from './levels.js';
 import { GameSession } from './session.js';
-import { readProgress, saveProgress } from './progress.js';
+import { readProgress, saveProgress, restoreRun, saveRun, nextStageIndex } from './progress.js';
 
 const $ = id => document.getElementById(id);
-const session = new GameSession(levels);
+let session;
+try { session = restoreRun(localStorage, levels); } catch {}
+session ||= new GameSession(levels);
 const modal = $('modal');
 let selected = [];
 let dragging = false, moved = false, start = -1, sound = false, audio;
 let resultOpen = false;
 let progress = {};
 try { progress = readProgress(localStorage, levels); } catch {}
-try { sound = localStorage.getItem('sequenstar-sound') === 'on'; } catch {}
+try { sound = (localStorage.getItem('sequencepang2-sound') ?? localStorage.getItem('sequenstar-sound')) === 'on'; } catch {}
+function persistRun() { try { saveRun(localStorage, session); } catch {} }
 
 function beep(win = false) {
   if (!sound) return;
@@ -49,7 +52,8 @@ function showHome() {
   $('game').hidden = true;
   $('home-cleared').textContent = levels.filter(level => progress[level.key] === true).length;
   $('home-total').textContent = `/ ${levels.length}`;
-  $('start-game').innerHTML = `${session.status === 'playing' ? '계속하기' : '시작하기'} <span aria-hidden="true">▶</span>`;
+  const next = ['playing', 'failed'].includes(session.status) ? session.index : nextStageIndex(levels, progress);
+  $('resume-note').textContent = session.status === 'playing' || next > 0 ? `STAGE ${String(next + 1).padStart(2, '0')}에서 이어서` : (levels.every(l => progress[l.key]) ? '모든 별을 모았어요! 다시 도전해 볼까요?' : '첫 번째 별을 만나러 가요');
 }
 
 function showGame() {
@@ -61,18 +65,17 @@ function showGame() {
 
 function load(index) {
   session.start(index);
+  persistRun();
   selected = [];
   dragging = false;
   showGame();
   message('별을 모두 모아 보세요');
 }
 
-function render() {
+function render(previousBoard) {
   const { board, moves, index, level } = session;
   $('stage-no').textContent = String(index + 1).padStart(2, '0');
   $('moves').textContent = moves;
-  $('stage-title').textContent = level.title;
-  $('chapter-label').textContent = chapters.find(c => c.id === level.chapter).name;
   $('lesson').hidden = !level.lesson;
   $('lesson').textContent = level.lesson || '';
   $('board').setAttribute('aria-label', `${level.n}×${level.n} 수열 퍼즐판`);
@@ -83,6 +86,17 @@ function render() {
       aria-label="${Math.floor(i / level.n) + 1}행 ${i % level.n + 1}열, ${cell.v}${cell.star ? ', 별' : ''}" aria-pressed="false">
       <span>${cell.v}</span>${cell.star ? '<span class="star" aria-hidden="true">★</span>' : ''}
     </button>` : '<div class="empty" aria-hidden="true"></div>').join('');
+  if (previousBoard && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    for (const tile of $('board').querySelectorAll('[data-i]')) {
+      const i = +tile.dataset.i, before = previousBoard.findIndex(c => c?.id === board[i].id);
+      const rows = Math.floor(i / level.n) - Math.floor(before / level.n);
+      if (before >= 0 && rows > 0) {
+        const gap = parseFloat(getComputedStyle($('board')).gap) || 0;
+        tile.style.setProperty('--fall-y', `${-rows * (tile.offsetHeight + gap)}px`);
+        tile.classList.add('falling');
+      }
+    }
+  }
   paint();
 }
 
@@ -115,6 +129,7 @@ function pick(i) {
 
 function commit() {
   if (modal.open || !selected.length) return;
+  const previousBoard = session.board;
   const result = session.play(selected);
   selected = [];
   if (!result) {
@@ -123,7 +138,7 @@ function commit() {
     return;
   }
   beep();
-  render();
+  render(previousBoard);
   message(`${result.sequence} 팡!`, true);
   if (result.status === 'cleared') {
     progress[session.level.key] = true;
@@ -131,6 +146,7 @@ function commit() {
     beep(true);
     showResult(true);
   } else if (result.status === 'failed') showResult(false);
+  persistRun();
 }
 
 function show(content, isResult = false) {
@@ -149,15 +165,16 @@ function showResult(won) {
     <div class="result-stage">STAGE ${String(session.index + 1).padStart(2, '0')}</div>
     <div class="result-symbol" aria-hidden="true">${won ? '★ ★ ★' : '☆'}</div>
     <h2 id="modal-title">${won ? '성공!' : '실패!'}</h2>
-    <p>${won ? '별을 모두 모았어요.' : (session.moves === 0 ? '남은 횟수를 모두 썼어요.' : '더 이상 연결할 수 없어요.')}</p>
-    <button class="primary" id="result-action">${won ? (finalStage ? '스테이지 선택' : '다음 스테이지') : '재도전'}</button>
+    <p>${won ? (finalStage ? '50개의 스테이지, 모든 별을 모았어요!' : '별을 모두 모았어요.') : (session.moves === 0 ? '남은 횟수를 모두 썼어요.' : '더 이상 연결할 수 없어요.')}</p>
+    <button class="primary" id="result-action">${won ? (finalStage ? '처음부터 다시 즐기기' : '다음 스테이지') : '재도전'}</button>
     <button class="secondary" id="result-home">메인으로</button>
   </div>`, true);
   $('result-action').onclick = () => {
     if (won) {
-      if (finalStage) { showHome(); picker(); }
+      if (finalStage) load(0);
       else load(session.index + 1);
     } else if (session.retry()) {
+      persistRun();
       selected = [];
       showGame();
       message('숫자 3개 이상을 이어 보세요');
@@ -166,50 +183,49 @@ function showResult(won) {
   $('result-home').onclick = showHome;
 }
 
-function picker(activeChapter = session.level.chapter) {
-  const chapter = chapters.find(c => c.id === activeChapter) || chapters[0];
-  const chapterLevels = levels.filter(level => level.chapter === chapter.id);
-  const cleared = chapterLevels.filter(level => progress[level.key]).length;
-  show(`<div class="eyebrow">CHAPTER SELECT</div><h2 id="modal-title">별을 따라, 한 걸음씩</h2>
-    <div class="chapter-tabs" role="group" aria-label="챕터 선택">${chapters.map((c,i) =>
-      `<button data-chapter="${c.id}" aria-label="${i+1}장 ${c.name}" aria-pressed="${c.id === chapter.id}"><span aria-hidden="true">${c.symbol}</span> ${String(i+1).padStart(2,'0')}</button>`).join('')}</div>
-    <div class="chapter-summary"><div><h3>${chapter.name}</h3><p>${chapter.subtitle}</p></div><strong>${cleared}<small> / ${chapterLevels.length}</small></strong></div>
-    <div class="level-grid">${chapterLevels.map(level =>
-      `<button data-stage="${level.id-1}" aria-label="스테이지 ${level.id}, ${level.title}${progress[level.key] ? ', 완료' : ''}" class="${level.id-1 === session.index ? 'current ' : ''}${progress[level.key] ? 'done' : ''}">
-        ${String(level.id).padStart(2,'0')}<small aria-hidden="true">${progress[level.key] ? '★' : '·'}</small></button>`).join('')}</div>`);
-  $('modal-content').querySelectorAll('[data-stage]').forEach(button => button.onclick = () => load(+button.dataset.stage));
-  $('modal-content').querySelectorAll('[data-chapter]').forEach(button => button.onclick = () => picker(button.dataset.chapter));
-}
-
 function settings() {
   const playing = !$('game').hidden;
-  show(`<div class="eyebrow">SEQUENSTAR</div><h2 id="modal-title">설정</h2>
+  show(`<h2 id="modal-title">설정</h2>
     <div class="settings-list">
       <button id="settings-sound" aria-pressed="${sound}">효과음 <span>${sound ? '켜짐' : '꺼짐'}</span></button>
       ${playing ? '<button id="settings-restart">다시하기 <span>↻</span></button><button id="settings-home">메인화면 <span>⌂</span></button>' : ''}
       <button id="settings-help">게임 방법 <span>?</span></button>
-    </div>${playing ? '<p class="settings-note">메인화면으로 나가도 현재 판은 유지돼요.</p>' : ''}`);
-  $('settings-sound').onclick = () => { sound = !sound; try { localStorage.setItem('sequenstar-sound', sound ? 'on' : 'off'); } catch {} beep(); settings(); };
+    </div>${playing ? '<p class="settings-note">현재 판은 이 기기에 자동으로 저장돼요.</p>' : ''}`);
+  $('settings-sound').onclick = () => { sound = !sound; try { localStorage.setItem('sequencepang2-sound', sound ? 'on' : 'off'); } catch {} beep(); settings(); };
   if (playing) {
-    $('settings-restart').onclick = () => { session.restart(); showGame(); message('처음부터 다시 시작해요'); };
+    $('settings-restart').onclick = () => { session.restart(); persistRun(); showGame(); message('처음부터 다시 시작해요'); };
     $('settings-home').onclick = showHome;
   }
-  $('settings-help').onclick = help;
+  $('settings-help').onclick = () => help();
 }
 
-function help() {
-  show(`<h2 id="modal-title">게임 방법</h2>
-    <p>이웃한 숫자 <b>3개 이상</b>을 누른 채로 이으세요. 대각선도 가능해요.</p>
-    <p><b>등차</b>　1 → 3 → 5<br><b>등비</b>　2 → 4 → 8</p>
-    <p>남은 횟수 안에 <b>★ 별을 모두</b> 모으면 성공! 타일이 사라지면 위의 타일이 내려와요. 새 타일은 생기지 않아요.</p>
-    <p>횟수를 다 쓰거나 연결할 수열이 없으면 실패예요. 실패 화면에서 재도전할 수 있어요.</p>
-    <p>설정 메뉴에서 다시하기와 메인화면 이동을 할 수 있어요.</p>
-    <p>시간제한은 없어요. 잘못된 연결은 횟수를 줄이지 않아요.</p>
-    <p>키보드: Tab으로 이동하고 Space로 선택한 다음 ‘선택 완료’를 누르세요.</p>`);
+function help(active = 'arithmetic') {
+  const demos = {
+    arithmetic: { title: '등차수열', values: [1, 2, 3], caption: '1 → 2 → 3 · 공차 +1', copy: '숫자가 같은 간격으로 변하면 연결할 수 있어요. <b>6 → 6 → 6</b>처럼 같은 숫자도 가능해요.' },
+    geometric: { title: '등비수열', values: [2, 4, 8], caption: '2 → 4 → 8 · 공비 ×2', copy: '같은 수를 계속 곱해도 연결할 수 있어요. <b>9 → 3 → 1</b>처럼 작아지는 방향도 괜찮아요.' },
+    gravity: { title: '별과 낙하', caption: '지우면 위의 숫자가 아래로!', copy: '제한된 이동 안에 <b>★ 붙은 타일을 모두</b> 모으세요. 별 없는 숫자는 남아도 돼요. 새 타일은 생기지 않아요.' }
+  };
+  const d = demos[active];
+  show(`<h2 id="modal-title">플레이 방법</h2>
+    <div class="help-tabs" role="group" aria-label="설명 선택">${Object.entries(demos).map(([key, demo]) => `<button data-demo="${key}" aria-pressed="${key === active}">${demo.title}</button>`).join('')}</div>
+    <div class="help-demo" aria-label="${active === 'gravity' ? '아래쪽 1, 2, 3이 사라지고 위쪽 2, 4, 8이 내려오는 시범' : `${d.values.join(', ')}을 차례로 드래그하는 시범`}">
+      ${active === 'gravity' ? `<div class="gravity-demo" aria-hidden="true">${[2,4,8,1,2,3].map((v,i) => `<span class="demo-tile">${v}${i === 3 || i === 5 ? '<b class="demo-star">★</b>' : ''}</span>`).join('')}</div>` : `<div class="demo-track" aria-hidden="true">${d.values.map((v,i) => `<span class="demo-tile">${v}${i === 2 ? '<b class="demo-star">★</b>' : ''}</span>`).join('')}<i class="demo-stroke"></i><span class="demo-hand">☝</span></div>`}
+      <div class="demo-caption">${d.caption}</div><p class="motion-caption">${active === 'gravity' ? '아랫줄을 지우면 윗줄이 한 칸 내려와요.' : '왼쪽부터 오른쪽까지 누른 채로 이어요.'}</p>
+    </div>
+    <button id="demo-toggle" class="demo-toggle" aria-pressed="false">시범 멈추기</button>
+    <p class="help-copy">${d.copy}</p>
+    <p class="help-note">이웃한 숫자 <b>3개 이상</b>을 누른 채로 이어요. 대각선과 꺾이는 길도 가능해요. 잘못된 연결은 이동을 쓰지 않아요.</p>
+    <p class="help-keyboard">키보드: Tab으로 이동 → Space로 선택 → 선택 완료. 시간제한은 없어요.</p>`);
+  $('modal-content').querySelectorAll('[data-demo]').forEach(button => button.onclick = () => help(button.dataset.demo));
+  $('demo-toggle').onclick = () => {
+    const paused = $('modal-content').querySelector('.help-demo').classList.toggle('paused');
+    $('demo-toggle').setAttribute('aria-pressed', String(paused));
+    $('demo-toggle').textContent = paused ? '시범 재생하기' : '시범 멈추기';
+  };
 }
 
 $('board').addEventListener('pointerdown', event => {
-  if (event.button !== 0 || !event.isPrimary || session.status !== 'playing') return;
+  if (modal.open || event.button !== 0 || !event.isPrimary || session.status !== 'playing') return;
   const tile = event.target.closest('[data-i]');
   if (!tile) return;
   event.preventDefault();
@@ -253,13 +269,16 @@ $('board').addEventListener('keydown', event => {
 $('submit').onclick = commit;
 $('start-game').onclick = () => {
   if (session.status === 'playing') { showGame(); message('숫자 3개 이상을 이어 보세요'); }
-  else { const next = levels.findIndex(level => !progress[level.key]); load(next === -1 ? 0 : next); }
+  else if (session.status === 'failed') load(session.index);
+  else load(nextStageIndex(levels, progress));
 };
 $('game-settings').onclick = settings;
 $('home-settings').onclick = settings;
-$('stage-picker').onclick = () => picker();
+$('game-home').onclick = showHome;
+$('game-help').onclick = () => help();
 $('close-modal').onclick = closeModal;
 modal.addEventListener('cancel', event => { if (resultOpen) event.preventDefault(); });
-$('home-help').onclick = help;
+$('home-help').onclick = () => help();
+window.addEventListener('pagehide', persistRun);
 window.addEventListener('resize', () => { if (!$('game').hidden) paint(); });
 showHome();

@@ -20,6 +20,7 @@ export class GameSession {
     this.levels = levels;
     this.index = 0;
     this.status = 'idle';
+    this.history = [];
     this.board = [];
     this.moves = 0;
   }
@@ -31,12 +32,14 @@ export class GameSession {
     this.index = index;
     this.board = structuredClone(this.level.board);
     this.moves = this.level.moves;
+    this.history = [];
     this.status = 'playing';
   }
 
   play(path) {
     if (this.status !== 'playing' || !valid(this.board, path, this.level.n)) return null;
     const sequence = kind(path.map(i => this.board[i].v));
+    this.history.push([...path]);
     this.board = remove(this.board, path, this.level.n);
     this.moves--;
     if (!stars(this.board)) this.status = 'cleared';

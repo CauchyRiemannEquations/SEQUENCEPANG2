@@ -3,102 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#06291f">
-  <meta name="application-name" content="시퀀스타">
-  <meta name="description" content="시퀀스타 — 수열을 연결하고 별을 모으는 애플망고 퍼즐.">
-  <title>시퀀스타 · SEQUENSTAR</title>
+  <meta name="theme-color" content="#063b2d">
+  <meta name="application-name" content="시퀀스팡2">
+  <meta name="description" content="숫자를 이어 별을 모으는 수열 퍼즐, 시퀀스팡2.">
+  <title>시퀀스팡2 · SEQUENCEPANG 2</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Bagel+Fat+One&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Bagel+Fat+One&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
   <main class="app-shell">
-    <section id="home" class="home-screen" aria-label="시퀀스타 메인화면">
-      <div class="home-tools">
-        <button id="home-settings" class="icon" aria-label="설정">⚙</button>
-      </div>
-      <div class="ambient" aria-hidden="true"><span>✦</span><span>✧</span><span>✦</span><span>·</span><span>✧</span></div>
-      <div class="welcome-card">
-        <div class="series-label">SEQUENCE SERIES</div><div class="hero-mascot"><img src="./mango-v2.png" alt="금빛 별과 애플망고 캐릭터" width="98" height="98"></div>
-        <div class="title-group">
-          <h1 class="welcome-logo" aria-label="시퀀스타"><svg viewBox="0 0 560 170" role="img" aria-hidden="true">
-                  <defs>
-                    <linearGradient id="logo-mango" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stop-color="#ffdf78"/>
-                      <stop offset="100%" stop-color="#efa638"/>
-                    </linearGradient>
-                  </defs>
-                  <path d="M100 92 L212 84 L322 92 L446 82" stroke="rgba(255,203,82,0.5)" stroke-width="16" fill="none" stroke-linecap="round"/>
-                  <g font-family="'Bagel Fat One', 'Jua', sans-serif" font-size="56" text-anchor="middle">
-                    <g transform="translate(100,88) rotate(-6)">
-                      <rect x="-46" y="-46" width="92" height="92" rx="18" fill="#fffbea" stroke="#0b3a2b" stroke-width="5"/>
-                      <text y="20" fill="#14532d">시</text>
-                      <text x="32" y="-24" font-family="Outfit, sans-serif" font-weight="800" font-size="17" fill="#efa638">1</text>
-                    </g>
-                    <g transform="translate(212,82) rotate(4)">
-                      <rect x="-46" y="-46" width="92" height="92" rx="18" fill="#fffbea" stroke="#0b3a2b" stroke-width="5"/>
-                      <text y="20" fill="#14532d">퀀</text>
-                      <text x="32" y="-24" font-family="Outfit, sans-serif" font-weight="800" font-size="17" fill="#efa638">2</text>
-                    </g>
-                    <g transform="translate(322,90) rotate(-4)">
-                      <rect x="-46" y="-46" width="92" height="92" rx="18" fill="#fffbea" stroke="#0b3a2b" stroke-width="5"/>
-                      <text y="20" fill="#14532d">스</text>
-                      <text x="32" y="-24" font-family="Outfit, sans-serif" font-weight="800" font-size="17" fill="#efa638">4</text>
-                    </g>
-                    <g transform="translate(446,80) rotate(7)">
-                      <path fill="#ffd84d" opacity="0.9" transform="scale(1.35)" d="M0-58 L11-25 L41-41 L24-12 L58-6 L25 5 L41 36 L11 20 L3 57 L-9 24 L-39 38 L-24 9 L-57 1 L-25-9 L-38-39 L-11-22 Z"/>
-                      <rect x="-50" y="-50" width="100" height="100" rx="20" fill="url(#logo-mango)" stroke="#0b3a2b" stroke-width="6"/>
-                      <text y="22" font-size="60" fill="#06291f">타</text>
-                      <text x="36" y="-26" font-family="Outfit, sans-serif" font-weight="800" font-size="18" fill="#14532d">★</text>
-                    </g>
-                  </g>
-                </svg></h1>
-          <div class="english-title" aria-hidden="true">SEQUEN<span>STAR</span></div>
-        </div>
-        <p class="welcome-tagline">차근차근 연결하고, 반짝이는 별을 모아요.</p>
-        <div class="home-progress"><span>클리어</span><strong id="home-cleared">0</strong><span id="home-total">/ 50</span><span class="gold" aria-hidden="true">★</span></div>
-        <div class="how-to-play" aria-label="기본 규칙">
-          <div class="htp-title">HOW TO PLAY</div>
-          <p><span>①</span> 숫자 3개 이상을 수열로 연결해요.</p>
-          <p><span>②</span> 남은 횟수 안에 모든 별을 모아요.</p>
-          <p><span>③</span> 시간제한 없이, 천천히 생각해요.</p>
-        </div>
+    <div class="garden" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><span>✦</span><span>✦</span></div>
+    <section id="home" class="home-screen" aria-label="시퀀스팡2 메인화면">
+      <div class="home-tools"><button id="home-settings" class="icon" aria-label="설정">⚙</button></div>
+      <div class="home-content">
+        <h1 class="brand brand-home"><img src="./sequencepang2-logo.png" alt="시퀀스팡2" width="1536" height="1152" fetchpriority="high"></h1>
+        <p class="home-tagline">숫자를 이어, 별을 모아요!</p>
+        <div class="home-progress"><span class="gold" aria-hidden="true">★</span><span>모은 스테이지</span><strong id="home-cleared">0</strong><span id="home-total">/ 50</span></div>
         <div class="home-actions">
           <button id="start-game" class="start-button">시작하기 <span aria-hidden="true">▶</span></button>
-          <div class="home-sub-actions">
-            <button id="stage-picker">스테이지 선택</button>
-            <button id="home-help">게임 방법</button>
-          </div>
+          <p id="resume-note" class="resume-note"></p>
+          <button id="home-help" class="text-button"><span aria-hidden="true">?</span> 플레이 방법</button>
         </div>
       </div>
+      <footer class="home-footer"><a href="mailto:crequations@gmail.com" aria-label="문의하기: crequations@gmail.com"><span aria-hidden="true">✉</span> 문의하기 <span class="contact-email">crequations@gmail.com</span></a></footer>
     </section>
-
     <section id="game" class="game" aria-label="퍼즐 플레이" hidden>
       <header class="game-header">
-        <span class="series-mark">SEQUENCE<br>SERIES</span>
-        <span class="small-logo">SEQUEN<span>STAR</span></span>
+        <button id="game-home" class="icon" aria-label="메인화면으로">←</button>
+        <div class="brand brand-game"><img src="./sequencepang2-logo.png" alt="시퀀스팡2" width="1536" height="1152"></div>
         <button id="game-settings" class="icon" aria-label="설정">⚙</button>
       </header>
-      <div class="stage-head"><div><p id="chapter-label" class="eyebrow"></p><h2>STAGE <span id="stage-no">01</span></h2></div><span id="stage-title"></span></div>
-      <section class="stats" aria-label="게임 현황">
-        <div><span>모은 별</span><strong><b class="gold">★</b> <span id="star-count">0 / 4</span></strong></div>
-        <div><span>남은 횟수</span><strong id="moves">2</strong></div>
+      <section class="game-status" aria-label="게임 현황">
+        <h2 class="stage-badge"><span>STAGE</span><strong id="stage-no">01</strong></h2>
+        <div class="stat"><span>남은 이동</span><strong id="moves">2</strong></div>
+        <div class="stat star-stat"><span>모은 별</span><strong><b class="gold" aria-hidden="true">★</b> <span id="star-count">0 / 4</span></strong></div>
       </section>
       <p id="lesson" class="lesson" hidden></p>
-      <div class="board-shell">
+      <div class="board-frame"><div class="board-shell">
         <div id="board" class="board" aria-label="수열 퍼즐판"></div>
         <svg id="lines" aria-hidden="true"><polyline/></svg>
-      </div>
-      <div class="feedback" id="feedback" role="status" aria-live="polite">숫자 3개 이상을 이어 보세요</div>
-
+      </div></div>
+      <div class="feedback" id="feedback" role="status" aria-live="polite">별을 모두 모아 보세요</div>
       <button id="submit" class="primary" hidden>선택 완료</button>
+      <button id="game-help" class="text-button game-help"><span aria-hidden="true">?</span> 플레이 방법</button>
     </section>
   </main>
-  <dialog id="modal" aria-labelledby="modal-title">
-    <div id="modal-content"></div>
-    <button id="close-modal" class="secondary">닫기</button>
-  </dialog>
+  <dialog id="modal" aria-labelledby="modal-title"><div id="modal-content"></div><button id="close-modal" class="secondary">닫기</button></dialog>
   <script type="module" src="./app.js"></script>
 </body>
 </html>
