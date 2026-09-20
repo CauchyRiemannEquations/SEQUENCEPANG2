@@ -2,6 +2,7 @@ import { kind, adjacent, stars } from './engine.js';
 import { levels } from './levels.js';
 import { GameSession } from './session.js';
 import { readProgress, saveProgress, restoreRun, saveRun, nextStageIndex, resetProgress, campaignComplete } from './progress.js';
+import { dragTargets, dragHits } from './drag-hit.js';
 
 const $ = id => document.getElementById(id);
 let session;
@@ -9,7 +10,7 @@ try { session = restoreRun(localStorage, levels); } catch {}
 session ||= new GameSession(levels);
 const modal = $('modal');
 let selected = [];
-let dragging = false, moved = false, start = -1, sound = false, audio;
+let dragging = false, moved = false, sound = false, audio, gesture;
 let resultOpen = false;
 let progress = {};
 try { progress = readProgress(localStorage, levels); } catch {}
@@ -143,14 +144,16 @@ function paint() {
 }
 
 function pick(i) {
-  if (modal.open || session.status !== 'playing' || !session.board[i]) return;
+  if (modal.open || session.status !== 'playing' || !session.board[i]) return false;
   if (selected.length > 1 && selected.at(-2) === i) selected.pop();
   else if (!selected.includes(i) && (!selected.length || adjacent(selected.at(-1), i, session.level.n))) selected.push(i);
+  else return false;
   paint();
   if (selected.length) {
     const values = selected.map(i => session.board[i].v), sequence = kind(values);
     message(`${values.join(' · ')}${sequence ? ' — ' + sequence : ''}`, !!sequence);
   }
+  return true;
 }
 
 function commit() {
@@ -288,38 +291,52 @@ function help(active = 'arithmetic') {
 }
 
 $('board').addEventListener('pointerdown', event => {
-  if (modal.open || event.button !== 0 || !event.isPrimary || session.status !== 'playing') return;
+  if (dragging || modal.open || event.button !== 0 || !event.isPrimary || session.status !== 'playing') return;
   const tile = event.target.closest('[data-i]');
   if (!tile) return;
   event.preventDefault();
-  start = +tile.dataset.i;
   dragging = true;
   moved = false;
   selected = [];
-  pick(start);
+  pick(+tile.dataset.i);
+  const board = $('board'), style = getComputedStyle(board);
+  gesture = {
+    pointerId: event.pointerId,
+    point: { x: event.clientX, y: event.clientY },
+    targets: dragTargets(board.getBoundingClientRect(), session.level.n,
+      parseFloat(style.columnGap) || 0, parseFloat(style.rowGap) || 0, session.board),
+  };
   $('board').setPointerCapture(event.pointerId);
 });
-$('board').addEventListener('pointermove', event => {
-  if (!dragging || !event.isPrimary) return;
-  const tile = document.elementFromPoint(event.clientX, event.clientY)?.closest('[data-i]');
-  if (tile && $('board').contains(tile)) {
-    const i = +tile.dataset.i;
-    if (i !== start) moved = true;
-    pick(i);
+function moveSelection(event) {
+  const point = { x: event.clientX, y: event.clientY };
+  for (const i of dragHits(gesture.point, point, gesture.targets)) {
+    if (pick(i)) moved = true;
   }
+  gesture.point = point;
+}
+$('board').addEventListener('pointermove', event => {
+  if (!dragging || event.pointerId !== gesture?.pointerId) return;
+  moveSelection(event);
 });
 $('board').addEventListener('pointerup', event => {
-  if (!dragging || !event.isPrimary) return;
+  if (!dragging || event.pointerId !== gesture?.pointerId) return;
+  moveSelection(event);
   dragging = false;
+  gesture = null;
   if (moved) commit();
   else { selected = []; paint(); message('누른 채로 숫자 3개 이상을 이으세요'); }
 });
-$('board').addEventListener('pointercancel', () => {
+function cancelDrag() {
+  if (!dragging) return;
   dragging = false;
+  gesture = null;
   selected = [];
   paint();
   message('선택을 취소했어요');
-});
+}
+$('board').addEventListener('pointercancel', cancelDrag);
+$('board').addEventListener('lostpointercapture', cancelDrag);
 $('board').addEventListener('click', event => {
   if (event.detail !== 0) return;
   const tile = event.target.closest('[data-i]');
@@ -343,7 +360,7 @@ $('close-modal').onclick = closeModal;
 modal.addEventListener('cancel', event => { if (resultOpen) event.preventDefault(); });
 $('home-help').onclick = () => help();
 window.addEventListener('pagehide', persistRun);
-function resizeGame() { if (!$('game').hidden) { fitBoard(); paint(); } }
+function resizeGame() { if (!$('game').hidden) { cancelDrag(); fitBoard(); paint(); } }
 window.addEventListener('resize', resizeGame);
 window.visualViewport?.addEventListener('resize', resizeGame);
 document.fonts?.ready.then(resizeGame);
