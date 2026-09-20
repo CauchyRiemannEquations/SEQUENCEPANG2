@@ -320,7 +320,6 @@ $('start-game').onclick = () => {
 $('game-settings').onclick = settings;
 $('home-settings').onclick = settings;
 $('game-home').onclick = showHome;
-$('game-help').onclick = () => help();
 $('close-modal').onclick = closeModal;
 modal.addEventListener('cancel', event => { if (resultOpen) event.preventDefault(); });
 $('home-help').onclick = () => help();
