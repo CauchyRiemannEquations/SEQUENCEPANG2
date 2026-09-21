@@ -4,6 +4,11 @@ import { GameSession } from './session.js';
 import { readProgress, saveProgress, restoreRun, saveRun, nextStageIndex, resetProgress, campaignComplete } from './progress.js';
 import { dragTargets, dragHits } from './drag-hit.js';
 import { MangoHints, firstHint, hintTier } from './hints.js';
+import { PlayObservation } from './jev-observation.js';
+
+const observation = new URLSearchParams(location.search).get('jev') === '1' ? new PlayObservation() : null;
+let jevDialogOpen = false;
+function observeActivity() { observation?.setActive(!document.hidden && !$('game').hidden && !modal.open && !jevDialogOpen && session.status === 'playing'); }
 
 const $ = id => document.getElementById(id);
 let session;
@@ -49,6 +54,7 @@ function message(text, good = false) {
 function closeModal() {
   resultOpen = false;
   modal.close();
+  observeActivity();
   if (visibleHint.length && !$('game').hidden) paintHint();
 }
 
@@ -61,6 +67,7 @@ function showHome() {
   $('home').hidden = false;
   $('game').hidden = true;
   $('coming-soon').hidden = true;
+  observeActivity();
   $('home-cleared').textContent = levels.filter(level => progress[level.key] === true).length;
   $('home-total').textContent = `/ ${levels.length}`;
   const next = ['playing', 'failed'].includes(session.status) ? session.index : nextStageIndex(levels, progress);
@@ -69,11 +76,13 @@ function showHome() {
 }
 
 function showGame() {
+  observation?.start(session.level);
   visibleHint = [];
   closeModal();
   $('home').hidden = true;
   $('coming-soon').hidden = true;
   $('game').hidden = false;
+  observeActivity();
   render();
 }
 
@@ -240,6 +249,7 @@ function revealHint() {
   if (session.history.length || session.status !== 'playing') load(session.index);
   else { selected = []; dragging = false; closeModal(); }
   visibleHint = tier === 1 ? path.slice(0, 1) : path;
+  if (observation) observation.hintSeen = tier === 1 ? 'GLOW' : 'GESTURE';
   renderHint(); fitBoard(); paint();
   message('별을 모두 모아 보세요');
   const position = i => `${Math.floor(i / session.level.n) + 1}행 ${i % session.level.n + 1}열`;
@@ -274,6 +284,7 @@ function commit() {
   if (modal.open || !selected.length) return;
   const previousBoard = session.board;
   const result = session.play(selected);
+  observation?.record(previousBoard, selected, !!result);
   selected = [];
   if (!result) {
     paint();
@@ -302,6 +313,7 @@ function show(content, isResult = false) {
   $('close-modal').hidden = isResult;
   $('modal-content').innerHTML = content;
   if (!modal.open) modal.showModal();
+  observeActivity();
   stopHintMotion();
 }
 
@@ -316,6 +328,7 @@ function showComingSoon() {
   $('complete-copy').textContent = `준비된 ${levels.length}개의 스테이지를 모두 클리어했어요!`;
   // No old replay may take priority over newly released stages on a later visit.
   session = new GameSession(levels);
+  observeActivity();
   persistRun();
   $('coming-title').focus({ preventScroll: true });
 }
@@ -381,6 +394,7 @@ function confirmReset() {
     hints = new MangoHints(hintStorage, levels);
     visibleHint = [];
     session = new GameSession(levels);
+    observation?.reset();
     selected = [];
     showHome();
   };
@@ -483,9 +497,19 @@ modal.addEventListener('cancel', event => { if (resultOpen) event.preventDefault
 $('home-help').onclick = () => help();
 window.addEventListener('pagehide', () => { persistRun(); stopHintMotion(); });
 document.addEventListener('visibilitychange', () => { if (document.hidden) stopHintMotion(); else if (!$('game').hidden) paintHint(); });
+document.addEventListener('visibilitychange', observeActivity);
+modal.addEventListener('close', observeActivity);
+window.addEventListener('pagehide', () => observation?.setActive(false));
+window.addEventListener('pageshow', observeActivity);
 reducedHintMotion.addEventListener('change', () => { if (!$('game').hidden) paintHint(); });
 function resizeGame() { if (!$('game').hidden) { cancelDrag(); fitBoard(); paint(); } }
 window.addEventListener('resize', resizeGame);
 window.visualViewport?.addEventListener('resize', resizeGame);
 document.fonts?.ready.then(resizeGame);
 showHome();
+if (observation) import('./jev-debug.js').then(({mountJevDebug}) => mountJevDebug({
+  snapshot: () => session.status === 'idle' ? null : observation.snapshot(session,hints.failures(session.level)),
+  pause: () => { jevDialogOpen=true; observeActivity(); stopHintMotion(); },
+  resume: () => { jevDialogOpen=false; observeActivity(); if (!$('game').hidden) paintHint(); },
+  jump: index => load(index),
+})).catch(() => {});
