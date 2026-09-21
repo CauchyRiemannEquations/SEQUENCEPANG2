@@ -1,4 +1,5 @@
 import { GameSession } from './session.js';
+import { hintKey } from './hints.js';
 
 export const progressKey = 'sequenstar-campaign-v2';
 
@@ -56,6 +57,7 @@ export function resetProgress(storage) {
     storage.setItem(progressKey, '{}');
     storage.removeItem(runKey);
     storage.removeItem('sequencepang2-v1');
+    storage.removeItem(hintKey);
     return true;
   } catch { return false; }
 }

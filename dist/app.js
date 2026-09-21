@@ -3,6 +3,7 @@ import { levels } from './levels.js';
 import { GameSession } from './session.js';
 import { readProgress, saveProgress, restoreRun, saveRun, nextStageIndex, resetProgress, campaignComplete } from './progress.js';
 import { dragTargets, dragHits } from './drag-hit.js';
+import { MangoHints, firstHint, hintTier } from './hints.js';
 
 const $ = id => document.getElementById(id);
 let session;
@@ -13,6 +14,10 @@ let selected = [];
 let dragging = false, moved = false, sound = false, audio, gesture;
 let resultOpen = false;
 let progress = {};
+let hintStorage;
+try { hintStorage = localStorage; } catch {}
+let hints = new MangoHints(hintStorage, levels);
+let visibleHint = [];
 try { progress = readProgress(localStorage, levels); } catch {}
 try { sound = (localStorage.getItem('sequencepang2-sound') ?? localStorage.getItem('sequenstar-sound')) === 'on'; } catch {}
 function persistRun() { try { saveRun(localStorage, session); } catch {} }
@@ -36,6 +41,7 @@ function beep(win = false) {
 }
 
 function message(text, good = false) {
+  $('feedback').removeAttribute('aria-label');
   $('feedback').textContent = text;
   $('feedback').classList.toggle('good', good);
 }
@@ -43,9 +49,12 @@ function message(text, good = false) {
 function closeModal() {
   resultOpen = false;
   modal.close();
+  if (visibleHint.length && !$('game').hidden) paintHint();
 }
 
 function showHome() {
+  stopHintMotion();
+  visibleHint = [];
   closeModal();
   dragging = false;
   selected = [];
@@ -60,6 +69,7 @@ function showHome() {
 }
 
 function showGame() {
+  visibleHint = [];
   closeModal();
   $('home').hidden = true;
   $('coming-soon').hidden = true;
@@ -91,6 +101,7 @@ function render(previousBoard) {
       <span>${cell.v}</span>${cell.star ? '<span class="star" aria-hidden="true">★</span>' : ''}
     </button>` : '<div class="empty" aria-hidden="true"></div>').join('');
   $('submit').hidden = selected.length < 3 || dragging;
+  renderHint();
   fitBoard();
   if (previousBoard && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     for (const tile of $('board').querySelectorAll('[data-i]')) {
@@ -141,6 +152,108 @@ function paint() {
     const bounds = element.getBoundingClientRect();
     return `${bounds.x + bounds.width / 2 - shell.x},${bounds.y + bounds.height / 2 - shell.y}`;
   }).join(' '));
+  paintHint();
+}
+
+let hintAnimations = [], hintAnimationKey = '';
+const reducedHintMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+function stopHintMotion() {
+  hintAnimations.forEach(animation => animation.cancel());
+  hintAnimations = []; hintAnimationKey = '';
+  $('hint-lines').classList.remove('demonstrating', 'still-hint');
+  $('hint-lines').querySelector('polyline').setAttribute('points', '');
+}
+
+function renderHint() {
+  const level = session.level, path = firstHint(level);
+  $('mango-hint').hidden = !path;
+  if (!path) return;
+  const failures = hints.failures(level), tier = hintTier(failures);
+  const button = $('ask-mango');
+  button.style.setProperty('--unripe', `${100 - Math.min(3, failures) / 3 * 100}%`);
+  button.classList.toggle('ripe', tier > 0);
+  button.classList.toggle('full-hint', tier === 2);
+  button.disabled = tier === 0 || session.status !== 'playing';
+  button.setAttribute('aria-label', visibleHint.length ? '힌트 숨기기' : tier === 2 ? '망고 힌트: 첫 연결 시범 보기' : tier === 1 ? '망고 힌트: 첫 숫자 보기' : `망고 힌트, 실패 ${failures}/3`);
+  button.setAttribute('aria-pressed', String(visibleHint.length > 0));
+}
+
+function paintHint() {
+  const path = !session.history.length && !$('game').hidden && !modal.open ? visibleHint : [];
+  for (const tile of $('board').querySelectorAll('[data-i]')) {
+    tile.classList.toggle('hint-start', path[0] === +tile.dataset.i);
+    tile.classList.remove('hinted');
+    tile.querySelector('.hint-sparkles')?.remove();
+    tile.removeAttribute('aria-describedby');
+    if (path[0] === +tile.dataset.i) {
+      tile.setAttribute('aria-describedby', 'hint-announcement');
+      const sparks = document.createElement('span');
+      sparks.className = 'hint-sparkles'; sparks.setAttribute('aria-hidden', 'true');
+      sparks.innerHTML = '<i>✦</i><i>✧</i><i>✦</i>';
+      tile.append(sparks);
+    }
+  }
+  if (path.length < 2) { stopHintMotion(); return; }
+  const shell = $('board').parentElement.getBoundingClientRect();
+  const points = path.map(i => {
+    const bounds = $('board').querySelector(`[data-i="${i}"]`).getBoundingClientRect();
+    return { x: bounds.x + bounds.width / 2 - shell.x, y: bounds.y + bounds.height / 2 - shell.y };
+  });
+  const key = JSON.stringify([points, reducedHintMotion.matches]);
+  if (key === hintAnimationKey) return;
+  stopHintMotion(); hintAnimationKey = key;
+  const overlay = $('hint-lines'), line = overlay.querySelector('polyline');
+  line.setAttribute('points', points.map(p => `${p.x},${p.y}`).join(' '));
+  const distances = [0];
+  for (let i = 1; i < points.length; i++) distances.push(distances[i-1] + Math.hypot(points[i].x-points[i-1].x,points[i].y-points[i-1].y));
+  const length = distances.at(-1);
+  if (!length) return;
+  if (reducedHintMotion.matches) {
+    overlay.classList.add('still-hint');
+    line.style.strokeDasharray = 'none'; line.style.strokeDashoffset = '0';
+    return;
+  }
+  overlay.classList.add('demonstrating');
+  const timing = { duration: 2800, iterations: Infinity, easing: 'linear' };
+  line.style.strokeDasharray = `${length} ${length}`;
+  hintAnimations.push(line.animate([
+    {strokeDashoffset:length,opacity:0,offset:0},
+    {strokeDashoffset:length,opacity:.9,offset:.14},
+    {strokeDashoffset:0,opacity:.9,offset:.7},
+    {strokeDashoffset:0,opacity:.9,offset:.82},
+    {strokeDashoffset:0,opacity:0,offset:.94},
+    {strokeDashoffset:0,opacity:0,offset:1},
+  ],timing));
+  const at = (p,opacity,offset) => ({transform:`translate(${p.x}px, ${p.y}px)`,opacity,offset});
+  for (const circle of overlay.querySelectorAll('circle')) {
+    hintAnimations.push(circle.animate([
+      at(points[0],0,0), at(points[0],1,.14),
+      ...points.slice(1).map((p,i) => at(p,1,.14+.56*distances[i+1]/length)),
+      at(points.at(-1),1,.82), at(points.at(-1),0,.94), at(points.at(-1),0,1),
+    ],timing));
+  }
+}
+
+function revealHint() {
+  const path = firstHint(session.level), tier = hintTier(hints.failures(session.level));
+  if (!path || !tier) return;
+  if (session.history.length || session.status !== 'playing') load(session.index);
+  else { selected = []; dragging = false; closeModal(); }
+  visibleHint = tier === 1 ? path.slice(0, 1) : path;
+  renderHint(); fitBoard(); paint();
+  message('별을 모두 모아 보세요');
+  const position = i => `${Math.floor(i / session.level.n) + 1}행 ${i % session.level.n + 1}열`;
+  $('hint-announcement').textContent = tier === 1 ? `첫 숫자 힌트: ${position(path[0])}의 ${session.board[path[0]].v}` : `첫 연결 힌트: ${path.map(i => `${position(i)}의 ${session.board[i].v}`).join(', 다음 ')}`;
+}
+
+function askMango() {
+  if (!firstHint(session.level) || !hintTier(hints.failures(session.level))) return;
+  if (visibleHint.length) { visibleHint = []; renderHint(); paint(); message('별을 모두 모아 보세요'); return; }
+  if (!session.history.length) { revealHint(); return; }
+  show(`<h2 id="modal-title">다시 시작할까요?</h2><p class="reset-copy">힌트는 처음 배치에서 보여줘요.</p><button id="restart-with-hint" class="primary">다시 시작 · 힌트 보기</button><button id="keep-playing" class="secondary">계속 풀어보기</button>`);
+  $('close-modal').hidden = true;
+  $('restart-with-hint').onclick = revealHint;
+  $('keep-playing').onclick = closeModal;
 }
 
 function pick(i) {
@@ -148,6 +261,7 @@ function pick(i) {
   if (selected.length > 1 && selected.at(-2) === i) selected.pop();
   else if (!selected.includes(i) && (!selected.length || adjacent(selected.at(-1), i, session.level.n))) selected.push(i);
   else return false;
+  if (visibleHint.length) { visibleHint = []; renderHint(); $('hint-announcement').textContent = ''; }
   paint();
   if (selected.length) {
     const values = selected.map(i => session.board[i].v), sequence = kind(values);
@@ -167,6 +281,8 @@ function commit() {
     return;
   }
   beep();
+  visibleHint = [];
+  if (result.status === 'failed') hints.recordFailure(session);
   render(previousBoard);
   message(`${result.sequence} 팡!`, true);
   if (result.status === 'cleared') {
@@ -186,6 +302,7 @@ function show(content, isResult = false) {
   $('close-modal').hidden = isResult;
   $('modal-content').innerHTML = content;
   if (!modal.open) modal.showModal();
+  stopHintMotion();
 }
 
 function showComingSoon() {
@@ -211,6 +328,7 @@ function showResult(won) {
     <h2 id="modal-title">${won ? '성공!' : '실패!'}</h2>
     <p>${won ? '별을 모두 모았어요.' : (session.moves === 0 ? '남은 횟수를 모두 썼어요.' : '더 이상 연결할 수 없어요.')}</p>
     <button class="primary" id="result-action">${won ? '다음 스테이지' : '재도전'}</button>
+    ${!won && firstHint(session.level) && hintTier(hints.failures(session.level)) ? '<button class="secondary result-hint" id="result-hint">🥭 힌트 보고 재도전</button>' : ''}
     <button class="secondary" id="result-home">메인으로</button>
   </div>`, true);
   $('result-action').onclick = () => {
@@ -224,6 +342,7 @@ function showResult(won) {
     }
   };
   $('result-home').onclick = showHome;
+  if ($('result-hint')) $('result-hint').onclick = revealHint;
 }
 
 function settings() {
@@ -244,7 +363,7 @@ function settings() {
 
 function confirmReset() {
   show(`<h2 id="modal-title">처음부터 시작할까요?</h2>
-    <p class="reset-copy">클리어 기록과 진행 중인 판을 지우고<br>1스테이지부터 다시 시작해요.</p>
+    <p class="reset-copy">클리어 기록, 망고 힌트와 진행 중인 판을 지우고<br>1스테이지부터 다시 시작해요.</p>
     <p id="reset-error" class="reset-error" role="alert" hidden></p>
     <button id="confirm-reset" class="primary">기록 지우고 초기화</button>
     <button id="cancel-reset" class="secondary">취소</button>`);
@@ -259,6 +378,8 @@ function confirmReset() {
       return;
     }
     progress = {};
+    hints = new MangoHints(hintStorage, levels);
+    visibleHint = [];
     session = new GameSession(levels);
     selected = [];
     showHome();
@@ -347,6 +468,7 @@ $('board').addEventListener('keydown', event => {
   if (event.key === 'Enter' && event.ctrlKey) { event.preventDefault(); commit(); }
 });
 $('submit').onclick = commit;
+$('ask-mango').onclick = askMango;
 $('start-game').onclick = () => {
   if (campaignComplete(levels, progress)) { showComingSoon(); return; }
   if (['playing', 'failed'].includes(session.status)) load(session.index);
@@ -359,7 +481,9 @@ $('coming-home').onclick = showHome;
 $('close-modal').onclick = closeModal;
 modal.addEventListener('cancel', event => { if (resultOpen) event.preventDefault(); });
 $('home-help').onclick = () => help();
-window.addEventListener('pagehide', persistRun);
+window.addEventListener('pagehide', () => { persistRun(); stopHintMotion(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) stopHintMotion(); else if (!$('game').hidden) paintHint(); });
+reducedHintMotion.addEventListener('change', () => { if (!$('game').hidden) paintHint(); });
 function resizeGame() { if (!$('game').hidden) { cancelDrag(); fitBoard(); paint(); } }
 window.addEventListener('resize', resizeGame);
 window.visualViewport?.addEventListener('resize', resizeGame);

@@ -1,7 +1,7 @@
 import { readFile, writeFile, readdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 const root = new URL('../dist/', import.meta.url);
-const files = ['index.html', 'style.css', 'manifest.webmanifest', 'sequencepang2-logo-v2.jpg'];
+const files = ['index.html', 'style.css', 'manifest.webmanifest', 'sequencepang2-logo-v2.jpg', 'mango-v2.png'];
 for (const name of await readdir(root)) {
   if (name.endsWith('.js') && name !== 'sw.js') files.push(name);
 }

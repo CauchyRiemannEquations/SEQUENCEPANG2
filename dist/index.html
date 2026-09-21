@@ -53,9 +53,17 @@
       <div class="board-frame"><div class="board-shell">
         <div id="board" class="board" aria-label="수열 퍼즐판"></div>
         <svg id="lines" aria-hidden="true"><polyline/></svg>
+        <svg id="hint-lines" aria-hidden="true"><polyline/><circle class="hint-touch-ring" r="18"/><circle class="hint-touch" r="8"/></svg>
       </div></div>
       <div class="feedback" id="feedback" role="status" aria-live="polite">별을 모두 모아 보세요</div>
       <button id="submit" class="primary" hidden>선택 완료</button>
+      <section id="mango-hint" class="mango-hint" aria-label="망고 힌트" hidden>
+        <button id="ask-mango" class="mango-button" aria-label="망고 힌트, 실패 0/3" disabled>
+          <span class="mango-fill" aria-hidden="true"><img class="mango-unripe" src="./mango-v2.png" alt="" width="68" height="68"><img class="mango-ripe" src="./mango-v2.png" alt="" width="68" height="68"></span>
+          <span class="mango-label" aria-hidden="true">힌트</span>
+        </button>
+        <span id="hint-announcement" class="visually-hidden" role="status" aria-live="polite"></span>
+      </section>
     </section>
     <section id="coming-soon" class="coming-screen" aria-labelledby="coming-title" hidden>
       <div class="coming-content">
