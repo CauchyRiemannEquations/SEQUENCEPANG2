@@ -6,7 +6,10 @@ import { dragTargets, dragHits } from './drag-hit.js';
 import { MangoHints, firstHint, hintTier } from './hints.js';
 import { PlayObservation } from './jev-observation.js';
 
-const observation = new URLSearchParams(location.search).get('jev') === '1' ? new PlayObservation() : null;
+const jevMode = new URLSearchParams(location.search).get('jev');
+const observation = ['1','active'].includes(jevMode) ? new PlayObservation() : null;
+let adaptive = null, jevRevision = 0;
+const effectiveHintTier = level => jevMode === 'active' ? hints.tier(level) : hintTier(hints.failures(level));
 let jevDialogOpen = false;
 function observeActivity() { observation?.setActive(!document.hidden && !$('game').hidden && !modal.open && !jevDialogOpen && session.status === 'playing'); }
 
@@ -59,6 +62,7 @@ function closeModal() {
 }
 
 function showHome() {
+  jevRevision++;
   stopHintMotion();
   visibleHint = [];
   closeModal();
@@ -76,6 +80,7 @@ function showHome() {
 }
 
 function showGame() {
+  jevRevision++;
   observation?.start(session.level);
   visibleHint = [];
   closeModal();
@@ -84,6 +89,7 @@ function showGame() {
   $('game').hidden = false;
   observeActivity();
   render();
+  void adaptive?.consider('retry');
 }
 
 function load(index) {
@@ -177,9 +183,10 @@ function renderHint() {
   const level = session.level, path = firstHint(level);
   $('mango-hint').hidden = !path;
   if (!path) return;
-  const failures = hints.failures(level), tier = hintTier(failures);
+  const failures = hints.failures(level), tier = effectiveHintTier(level);
+  const ripeness = jevMode === 'active' ? hints.ripeness(level) : Math.min(3,failures);
   const button = $('ask-mango');
-  button.style.setProperty('--unripe', `${100 - Math.min(3, failures) / 3 * 100}%`);
+  button.style.setProperty('--unripe', `${100 - ripeness / 3 * 100}%`);
   button.classList.toggle('ripe', tier > 0);
   button.classList.toggle('full-hint', tier === 2);
   button.disabled = tier === 0 || session.status !== 'playing';
@@ -244,7 +251,7 @@ function paintHint() {
 }
 
 function revealHint() {
-  const path = firstHint(session.level), tier = hintTier(hints.failures(session.level));
+  const path = firstHint(session.level), tier = effectiveHintTier(session.level);
   if (!path || !tier) return;
   if (session.history.length || session.status !== 'playing') load(session.index);
   else { selected = []; dragging = false; closeModal(); }
@@ -257,7 +264,7 @@ function revealHint() {
 }
 
 function askMango() {
-  if (!firstHint(session.level) || !hintTier(hints.failures(session.level))) return;
+  if (!firstHint(session.level) || !effectiveHintTier(session.level)) return;
   if (visibleHint.length) { visibleHint = []; renderHint(); paint(); message('별을 모두 모아 보세요'); return; }
   if (!session.history.length) { revealHint(); return; }
   show(`<h2 id="modal-title">다시 시작할까요?</h2><p class="reset-copy">힌트는 처음 배치에서 보여줘요.</p><button id="restart-with-hint" class="primary">다시 시작 · 힌트 보기</button><button id="keep-playing" class="secondary">계속 풀어보기</button>`);
@@ -283,12 +290,15 @@ function pick(i) {
 function commit() {
   if (modal.open || !selected.length) return;
   const previousBoard = session.board;
+  const attemptLength = selected.length;
   const result = session.play(selected);
+  if (result) jevRevision++;
   observation?.record(previousBoard, selected, !!result);
   selected = [];
   if (!result) {
     paint();
     message('등차·등비수열 3개 이상을 연결해 주세요');
+    if (attemptLength >= 3) void adaptive?.consider('invalid');
     return;
   }
   beep();
@@ -303,6 +313,7 @@ function commit() {
     showResult(true);
   } else if (result.status === 'failed') showResult(false);
   persistRun();
+  void adaptive?.consider(result.status === 'failed' ? 'failed' : 'repeat');
 }
 
 function show(content, isResult = false) {
@@ -341,7 +352,7 @@ function showResult(won) {
     <h2 id="modal-title">${won ? '성공!' : '실패!'}</h2>
     <p>${won ? '별을 모두 모았어요.' : (session.moves === 0 ? '남은 횟수를 모두 썼어요.' : '더 이상 연결할 수 없어요.')}</p>
     <button class="primary" id="result-action">${won ? '다음 스테이지' : '재도전'}</button>
-    ${!won && firstHint(session.level) && hintTier(hints.failures(session.level)) ? '<button class="secondary result-hint" id="result-hint">🥭 힌트 보고 재도전</button>' : ''}
+    ${!won && firstHint(session.level) && effectiveHintTier(session.level) ? '<button class="secondary result-hint" id="result-hint">🥭 힌트 보고 재도전</button>' : ''}
     <button class="secondary" id="result-home">메인으로</button>
   </div>`, true);
   $('result-action').onclick = () => {
@@ -395,6 +406,7 @@ function confirmReset() {
     visibleHint = [];
     session = new GameSession(levels);
     observation?.reset();
+    adaptive?.reset();
     selected = [];
     showHome();
   };
@@ -507,9 +519,29 @@ window.addEventListener('resize', resizeGame);
 window.visualViewport?.addEventListener('resize', resizeGame);
 document.fonts?.ready.then(resizeGame);
 showHome();
+if (jevMode === 'active') import('./jev-adaptive.js').then(async ({AdaptiveHints}) => {
+  adaptive = new AdaptiveHints({
+    capture: () => session.status === 'idle' || $('game').hidden ? null : ({
+      key:session.level.key, level:session.level, token:jevRevision, tier:effectiveHintTier(session.level),
+      state:observation.snapshot(session,hints.failures(session.level)),
+    }),
+    isCurrent: snap => snap.token === jevRevision && snap.key === session.level.key && !$('game').hidden && ['playing','failed'].includes(session.status),
+    grant: (level,offer) => {
+      const before = effectiveHintTier(level);
+      hints.grant(level,offer.tier,offer.ripeness);
+      renderHint();
+      if (effectiveHintTier(level)>before && resultOpen && session.status==='failed') showResult(false);
+    },
+  });
+  await adaptive.connect();
+  window.addEventListener('online',()=>adaptive.connect());
+  setInterval(()=>{ if (!document.hidden && !$('game').hidden && !modal.open && !jevDialogOpen && !dragging && !selected.length) void adaptive.consider('thinking'); },15000);
+}).catch(()=>{});
 if (observation) import('./jev-debug.js').then(({mountJevDebug}) => mountJevDebug({
   snapshot: () => session.status === 'idle' ? null : observation.snapshot(session,hints.failures(session.level)),
   pause: () => { jevDialogOpen=true; observeActivity(); stopHintMotion(); },
   resume: () => { jevDialogOpen=false; observeActivity(); if (!$('game').hidden) paintHint(); },
   jump: index => load(index),
+  automatic: jevMode === 'active',
+  autoState: () => adaptive ? {status:adaptive.status,last:adaptive.last} : {status:'연결 확인 중',last:null},
 })).catch(() => {});
