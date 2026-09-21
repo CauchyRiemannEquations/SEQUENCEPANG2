@@ -96,3 +96,8 @@ dialog{color:var(--cream);background:linear-gradient(145deg,#13513e,#042d23);bor
 @keyframes hint-twinkle{0%,100%{opacity:.35;transform:scale(.65)}50%{opacity:1;transform:scale(1.15)}}
 @media(prefers-reduced-motion:reduce){.tile.hint-start,.hint-sparkles i{animation:none!important}.hint-sparkles i{opacity:1}.mango-ripe{transition:none}}
 @media(max-height:620px){.mango-hint{height:69px;margin-top:4px}.mango-button{height:69px;width:72px}.mango-fill{height:54px;width:54px}}
+.jev-toggle{position:fixed;right:10px;bottom:max(10px,env(safe-area-inset-bottom));z-index:30;padding:8px 12px;border:1px solid #c6dfd5;border-radius:20px;background:#103e32;color:#fff4cd;font:14px system-ui;min-height:40px}
+.jev-dialog{width:min(92vw,430px);max-height:85dvh;overflow:auto;padding:20px;border:1px solid #638d77;border-radius:22px;background:#103e32;color:#fff4cd;font:14px/1.5 system-ui}
+.jev-dialog::backdrop{background:#001b16c9}.jev-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}.jev-heading h2{margin:0;font-size:21px}.jev-heading button{font-size:25px;min-width:44px;min-height:44px}
+.jev-note{color:#c0d3c9;font-size:12px}.jev-stage-form{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.jev-stage-form input{width:70px;padding:8px;border-radius:8px;background:#fff4d3;color:#153c30;font:inherit}.jev-stage-form button{padding:8px 12px;min-height:44px}
+.jev-dialog pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}.jev-dialog details{margin-top:16px}.jev-dialog summary{cursor:pointer;min-height:36px}#jev-result p{display:flex;justify-content:space-between;gap:12px;margin:7px 0}#jev-result{font-variant-numeric:tabular-nums}#jev-status{font-size:13px;min-height:38px}
