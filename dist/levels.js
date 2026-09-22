@@ -1,5 +1,7 @@
 import { campaignData } from './campaign-data.js';
 import { expansionData } from './expansion-data.js';
+import { publishedShapes, publishedChapters } from './published-shapes.js';
+import { shapeLevel } from './shape-level.js';
 
 const specs = [
   [4,2,[1,2,3,8, 7,9,5,2, 2,4,6,9, 9,5,8,7],[0,2,8,10]],
@@ -11,6 +13,7 @@ export const chapters = [
   { id: 'orbit', name: '별의 궤도', subtitle: '다음 움직임을 생각해요', symbol: '✧' },
   { id: 'weave', name: '별의 갈림길', subtitle: '남겨 둔 숫자를 다시 만나요', symbol: '✶' },
   { id: 'summit', name: '별의 정상', subtitle: '마지막 연결까지 내다봐요', symbol: '✷' },
+  ...publishedChapters,
 ];
 
 const tutorials = [
@@ -34,4 +37,5 @@ export const levels = [
   ...specs.map(([n,m,v,s], i) => make(n,m,v,s,`original-${i+1}`, { chapter: 'first', title: originalNames[i], legacyIndex: i, objective: 'practice', ...(i === 0 ? { lesson: '타일을 지우면 위의 숫자가 내려와요. 새 타일은 생기지 않아요.' } : {}) })),
   ...campaignData.map((l,i) => make(l.n,l.moves,l.values,l.stars,`complex-v3-${i+11}`, { chapter: i < 10 ? 'grove' : 'orbit', title: campaignNames[i], objective: l.objective })),
   ...expansionData.map((l,i) => make(l.n,l.moves,l.values,l.stars,`expansion-v1-${i+31}`, { chapter: i < 10 ? 'weave' : 'summit', title: expansionNames[i], objective: l.objective })),
+  ...publishedShapes.map(shapeLevel),
 ].map((level, i) => ({ ...level, id: i + 1 }));

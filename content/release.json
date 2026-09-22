@@ -1,0 +1,6 @@
+{
+  "publishedThrough": 50,
+  "preparedThrough": 100,
+  "batchSize": 10,
+  "policy": "Publish the next ten stages only when the owner explicitly requests it. No automatic release schedule."
+}

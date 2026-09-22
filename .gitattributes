@@ -1,0 +1,6 @@
+# Keep generated release payloads and service-worker content hashes identical
+# on Windows authoring machines and Linux CI/hosting.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.woff binary

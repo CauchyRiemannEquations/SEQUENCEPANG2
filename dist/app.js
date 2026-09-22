@@ -92,14 +92,14 @@ function render(previousBoard) {
   $('moves').textContent = moves;
   $('lesson').hidden = !level.lesson;
   $('lesson').textContent = level.lesson || '';
-  $('board').setAttribute('aria-label', `${level.n}×${level.n} 수열 퍼즐판`);
+  $('board').setAttribute('aria-label', `${board.length / level.n}행 ${level.n}열${level.mask ? ' 계단형' : ''} 수열 퍼즐판`);
   $('star-count').textContent = `${stars(level.board) - stars(board)} / ${stars(level.board)}`;
   $('board').style.setProperty('--n', level.n);
   $('board').innerHTML = board.map((cell, i) => cell ? `
     <button class="tile${cell.star ? ' starred' : ''}" data-i="${i}"
       aria-label="${Math.floor(i / level.n) + 1}행 ${i % level.n + 1}열, ${cell.v}${cell.star ? ', 별' : ''}" aria-pressed="false">
       <span>${cell.v}</span>${cell.star ? '<span class="star" aria-hidden="true">★</span>' : ''}
-    </button>` : '<div class="empty" aria-hidden="true"></div>').join('');
+    </button>` : `<div class="${level.mask?.[i] === false ? 'void' : 'empty'}" aria-hidden="true"></div>`).join('');
   $('submit').hidden = selected.length < 3 || dragging;
   renderHint();
   fitBoard();
@@ -132,8 +132,11 @@ function fitBoard() {
     controls += element.getBoundingClientRect().height + parseFloat(style.marginTop) + parseFloat(style.marginBottom);
   }
   const visibleHeight = window.visualViewport?.height || window.innerHeight;
-  const minBoard = session.level.n === 5 ? 250 : 220;
-  const size = Math.floor(Math.min(game.clientWidth - paddingX, Math.max(minBoard, visibleHeight - paddingY - controls - 8)));
+  const columns = session.level.n, rows = session.board.length / columns;
+  const minBoard = columns * 44 + (columns - 1) * 7 + 46;
+  const availableHeight = visibleHeight - paddingY - controls - 8;
+  const widthForHeight = (availableHeight - 46 - (rows - 1) * 7) / rows * columns + (columns - 1) * 7 + 46;
+  const size = Math.floor(Math.min(game.clientWidth - paddingX, Math.max(minBoard, widthForHeight)));
   game.querySelector('.board-frame').style.width = `${size}px`;
 }
 

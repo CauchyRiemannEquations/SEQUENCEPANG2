@@ -96,3 +96,6 @@ dialog{color:var(--cream);background:linear-gradient(145deg,#13513e,#042d23);bor
 @keyframes hint-twinkle{0%,100%{opacity:.35;transform:scale(.65)}50%{opacity:1;transform:scale(1.15)}}
 @media(prefers-reduced-motion:reduce){.tile.hint-start,.hint-sparkles i{animation:none!important}.hint-sparkles i{opacity:1}.mango-ripe{transition:none}}
 @media(max-height:620px){.mango-hint{height:69px;margin-top:4px}.mango-button{height:69px;width:72px}.mango-fill{height:54px;width:54px}}
+
+/* Missing cells keep grid geometry but have no tile, hit target or empty-slot decoration. */
+.void{aspect-ratio:1;min-width:0;visibility:hidden;pointer-events:none}

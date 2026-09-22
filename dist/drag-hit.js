@@ -2,7 +2,8 @@
 // move the touch targets. Corner grazes between diagonal cells are ignored.
 export function dragTargets(bounds, n, columnGap, rowGap, board) {
   const width = (bounds.width - columnGap * (n - 1)) / n;
-  const height = (bounds.height - rowGap * (n - 1)) / n;
+  const rows = board.length / n;
+  const height = (bounds.height - rowGap * (rows - 1)) / rows;
   const radius = Math.min(width, height) * 0.34;
   if (!(radius > 0)) return [];
   return board.flatMap((cell, index) => cell ? [{

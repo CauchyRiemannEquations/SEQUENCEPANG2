@@ -1,7 +1,9 @@
 export function kind(values){if(values.length<3)return null;const d=values[1]-values[0];if(values.every((v,i)=>i<1||v-values[i-1]===d))return '등차수열';if(values.every((v,i)=>i<2||v*values[i-2]===values[i-1]*values[i-1]))return '등비수열';return null;}
 export function adjacent(a,b,n){return a!==b&&Math.abs(a%n-b%n)<=1&&Math.abs(Math.floor(a/n)-Math.floor(b/n))<=1;}
 export function valid(board,path,n){return path.length>=3&&new Set(path).size===path.length&&path.every((p,i)=>Number.isInteger(p)&&!!board[p]&&(!i||adjacent(p,path[i-1],n)))&&!!kind(path.map(p=>board[p].v));}
-export function remove(board,path,n){const next=board.map(c=>c?{...c}:null);for(const p of path)next[p]=null;for(let c=0;c<n;c++){const col=[];for(let r=0;r<n;r++)if(next[r*n+c])col.push(next[r*n+c]);for(let r=n-1;r>=0;r--)next[r*n+c]=col.pop()||null;}return next;}
+// n is the column count. Shaped boards have bottom-aligned contiguous columns:
+// gravity cannot fill their missing top cells because tiles are never spawned.
+export function remove(board,path,n){const rows=board.length/n;const next=board.map(c=>c?{...c}:null);for(const p of path)next[p]=null;for(let c=0;c<n;c++){const col=[];for(let r=0;r<rows;r++)if(next[r*n+c])col.push(next[r*n+c]);for(let r=rows-1;r>=0;r--)next[r*n+c]=col.pop()||null;}return next;}
 export const stars=board=>board.filter(c=>c?.star).length;
 const exhausted = Symbol('search limit');
 function spend(budget) { if (--budget.left < 0) throw exhausted; }
