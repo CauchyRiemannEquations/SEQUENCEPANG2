@@ -93,7 +93,7 @@ test('campaign completion waits for every stage and reopens when new stages are 
   assert.equal(campaignComplete(levels,progress),true);
   const expanded=[...levels,{key:'future-stage-51'}];
   assert.equal(campaignComplete(expanded,progress),false);
-  assert.equal(nextStageIndex(expanded,progress),50);
+  assert.equal(nextStageIndex(expanded,progress),levels.length);
   assert.equal(campaignComplete(levels,{}),false);
   assert.equal(campaignComplete([],{}),false);
 });

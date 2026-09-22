@@ -5,10 +5,13 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "test": "node scripts/build-sw.mjs --check && node --test tests/*.test.mjs",
+    "test": "node scripts/release-stages.mjs --check && node scripts/build-sw.mjs --check && node --test tests/*.test.mjs",
     "generate:campaign": "node scripts/generate-campaign.mjs",
     "generate:expansion": "node scripts/generate-expansion.mjs",
-    "build:pwa": "node scripts/build-sw.mjs"
+    "generate:shapes": "node scripts/generate-shapes.mjs",
+    "release:stages": "node scripts/release-stages.mjs",
+    "preview:stages": "node scripts/release-stages.mjs --preview work/preview --through 100",
+    "build:pwa": "node scripts/release-stages.mjs --check && node scripts/build-sw.mjs"
   },
   "engines": {
     "node": ">=20"

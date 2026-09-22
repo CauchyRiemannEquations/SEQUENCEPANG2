@@ -1,0 +1,778 @@
+[
+  {
+    "id": 71,
+    "rows": 4,
+    "cols": 4,
+    "mask": [
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "moves": 3,
+    "minimumMoves": 2,
+    "title": "첫 번째 계단",
+    "lesson": "빠진 칸은 건너뛸 수 없어요. 숫자는 같은 열에서 아래로 내려와요.",
+    "objective": "order",
+    "pacing": "intro",
+    "designIntent": "길이가 다른 열의 계단 경계에서 연결하고 낙하를 이용한다.",
+    "values": [
+      null,
+      4,
+      4,
+      4,
+      6,
+      7,
+      2,
+      5,
+      1,
+      8,
+      8,
+      5,
+      6,
+      5,
+      3,
+      1
+    ],
+    "stars": [
+      1,
+      5,
+      6,
+      9,
+      10,
+      15
+    ],
+    "solution": [
+      [
+        4,
+        5,
+        10
+      ],
+      [
+        9,
+        5,
+        10,
+        15
+      ]
+    ],
+    "legalFirstMoves": 10,
+    "winningFirstMoves": 1,
+    "gravitySteps": 1,
+    "boundarySteps": 1,
+    "mixedSequences": true
+  },
+  {
+    "id": 72,
+    "rows": 4,
+    "cols": 4,
+    "mask": [
+      true,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "moves": 3,
+    "minimumMoves": 2,
+    "title": "반대쪽 계단",
+    "objective": "order",
+    "pacing": "intro",
+    "designIntent": "길이가 다른 열의 계단 경계에서 연결하고 낙하를 이용한다.",
+    "values": [
+      3,
+      7,
+      4,
+      null,
+      2,
+      3,
+      4,
+      3,
+      5,
+      1,
+      7,
+      4,
+      9,
+      1,
+      5,
+      2
+    ],
+    "stars": [
+      2,
+      6,
+      10,
+      11
+    ],
+    "solution": [
+      [
+        2,
+        6,
+        11
+      ],
+      [
+        10,
+        14,
+        11
+      ]
+    ],
+    "legalFirstMoves": 13,
+    "winningFirstMoves": 1,
+    "gravitySteps": 1,
+    "boundarySteps": 1,
+    "mixedSequences": false
+  },
+  {
+    "id": 73,
+    "rows": 4,
+    "cols": 4,
+    "mask": [
+      false,
+      false,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "moves": 3,
+    "minimumMoves": 3,
+    "title": "짧은 열 긴 열",
+    "objective": "order",
+    "pacing": "practice",
+    "designIntent": "길이가 다른 열의 계단 경계에서 연결하고 낙하를 이용한다.",
+    "values": [
+      null,
+      null,
+      6,
+      1,
+      null,
+      5,
+      8,
+      3,
+      6,
+      4,
+      5,
+      3,
+      7,
+      6,
+      4,
+      7
+    ],
+    "stars": [
+      3,
+      5,
+      7,
+      8,
+      12,
+      13,
+      14,
+      15
+    ],
+    "solution": [
+      [
+        3,
+        7,
+        10,
+        15
+      ],
+      [
+        5,
+        8,
+        12
+      ],
+      [
+        10,
+        13,
+        14
+      ]
+    ],
+    "legalFirstMoves": 16,
+    "winningFirstMoves": 3,
+    "gravitySteps": 1,
+    "boundarySteps": 1,
+    "mixedSequences": false
+  },
+  {
+    "id": 74,
+    "rows": 4,
+    "cols": 4,
+    "mask": [
+      true,
+      true,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "moves": 3,
+    "minimumMoves": 3,
+    "title": "거꾸로 선 계단",
+    "objective": "order",
+    "pacing": "practice",
+    "designIntent": "길이가 다른 열의 계단 경계에서 연결하고 낙하를 이용한다.",
+    "values": [
+      5,
+      3,
+      null,
+      null,
+      9,
+      8,
+      5,
+      null,
+      8,
+      8,
+      2,
+      9,
+      1,
+      8,
+      3,
+      9
+    ],
+    "stars": [
+      1,
+      4,
+      6,
+      9,
+      13
+    ],
+    "solution": [
+      [
+        5,
+        6,
+        10
+      ],
+      [
+        8,
+        9,
+        13
+      ],
+      [
+        8,
+        13,
+        12
+      ]
+    ],
+    "legalFirstMoves": 7,
+    "winningFirstMoves": 2,
+    "gravitySteps": 1,
+    "boundarySteps": 1,
+    "mixedSequences": true
+  },
+  {
+    "id": 75,
+    "rows": 5,
+    "cols": 4,
+    "mask": [
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "moves": 3,
+    "minimumMoves": 3,
+    "title": "계단 아래의 준비",
+    "objective": "setup",
+    "pacing": "practice",
+    "designIntent": "별 없는 수열을 먼저 지워 다음 연결을 만든다.",
+    "values": [
+      null,
+      null,
+      null,
+      5,
+      null,
+      null,
+      9,
+      4,
+      null,
+      3,
+      7,
+      1,
+      7,
+      4,
+      4,
+      7,
+      3,
+      7,
+      2,
+      6
+    ],
+    "stars": [
+      7,
+      10,
+      12,
+      17,
+      18,
+      19
+    ],
+    "solution": [
+      [
+        11,
+        14,
+        15
+      ],
+      [
+        12,
+        17,
+        14
+      ],
+      [
+        18,
+        15,
+        19
+      ]
+    ],
+    "legalFirstMoves": 5,
+    "winningFirstMoves": 1,
+    "gravitySteps": 2,
+    "boundarySteps": 1,
+    "mixedSequences": false
+  },
+  {
+    "id": 76,
+    "rows": 3,
+    "cols": 4,
+    "moves": 3,
+    "minimumMoves": 2,
+    "title": "반듯한 쉼표",
+    "objective": "order",
+    "pacing": "relief",
+    "designIntent": "판의 폭과 열의 높이에 맞춰 다음 연결을 준비한다.",
+    "values": [
+      7,
+      7,
+      2,
+      3,
+      6,
+      6,
+      3,
+      7,
+      9,
+      6,
+      8,
+      5
+    ],
+    "stars": [
+      5,
+      6,
+      8,
+      9,
+      10
+    ],
+    "solution": [
+      [
+        6,
+        5,
+        8
+      ],
+      [
+        9,
+        5,
+        10
+      ]
+    ],
+    "legalFirstMoves": 4,
+    "winningFirstMoves": 2,
+    "gravitySteps": 1,
+    "boundarySteps": 0,
+    "mixedSequences": false
+  },
+  {
+    "id": 77,
+    "rows": 4,
+    "cols": 4,
+    "mask": [
+      false,
+      false,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "moves": 3,
+    "minimumMoves": 3,
+    "title": "경계에서 꺾기",
+    "objective": "order",
+    "pacing": "challenge",
+    "designIntent": "길이가 다른 열의 계단 경계에서 연결하고 낙하를 이용한다.",
+    "values": [
+      null,
+      null,
+      8,
+      8,
+      null,
+      3,
+      5,
+      5,
+      2,
+      5,
+      6,
+      2,
+      6,
+      1,
+      2,
+      5
+    ],
+    "stars": [
+      2,
+      3,
+      5,
+      6,
+      8,
+      9,
+      11,
+      14
+    ],
+    "solution": [
+      [
+        3,
+        6,
+        11
+      ],
+      [
+        6,
+        9,
+        8
+      ],
+      [
+        9,
+        14,
+        13
+      ]
+    ],
+    "legalFirstMoves": 6,
+    "winningFirstMoves": 1,
+    "gravitySteps": 2,
+    "boundarySteps": 1,
+    "mixedSequences": false
+  },
+  {
+    "id": 78,
+    "rows": 4,
+    "cols": 5,
+    "mask": [
+      false,
+      false,
+      false,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "moves": 3,
+    "minimumMoves": 3,
+    "title": "이어지는 층",
+    "objective": "mixed",
+    "pacing": "challenge",
+    "designIntent": "길이가 다른 열의 계단 경계에서 연결하고 낙하를 이용한다.",
+    "values": [
+      null,
+      null,
+      null,
+      4,
+      6,
+      null,
+      8,
+      4,
+      2,
+      2,
+      3,
+      3,
+      7,
+      4,
+      6,
+      3,
+      9,
+      1,
+      9,
+      7
+    ],
+    "stars": [
+      6,
+      11,
+      13,
+      14,
+      15,
+      16,
+      18
+    ],
+    "solution": [
+      [
+        10,
+        11,
+        15
+      ],
+      [
+        13,
+        14,
+        18
+      ],
+      [
+        12,
+        11,
+        16
+      ]
+    ],
+    "legalFirstMoves": 11,
+    "winningFirstMoves": 2,
+    "gravitySteps": 1,
+    "boundarySteps": 1,
+    "mixedSequences": true
+  },
+  {
+    "id": 79,
+    "rows": 5,
+    "cols": 4,
+    "mask": [
+      true,
+      false,
+      false,
+      false,
+      true,
+      true,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "moves": 3,
+    "minimumMoves": 3,
+    "title": "한 칸 낮은 별",
+    "objective": "setup",
+    "pacing": "challenge",
+    "designIntent": "별 없는 수열을 먼저 지워 다음 연결을 만든다.",
+    "values": [
+      2,
+      null,
+      null,
+      null,
+      1,
+      9,
+      null,
+      null,
+      4,
+      8,
+      3,
+      null,
+      7,
+      9,
+      1,
+      6,
+      8,
+      2,
+      6,
+      7
+    ],
+    "stars": [
+      8,
+      14,
+      17,
+      18
+    ],
+    "solution": [
+      [
+        5,
+        9,
+        12
+      ],
+      [
+        12,
+        17,
+        14
+      ],
+      [
+        14,
+        18,
+        17
+      ]
+    ],
+    "legalFirstMoves": 6,
+    "winningFirstMoves": 3,
+    "gravitySteps": 2,
+    "boundarySteps": 1,
+    "mixedSequences": true
+  },
+  {
+    "id": 80,
+    "rows": 4,
+    "cols": 5,
+    "mask": [
+      false,
+      false,
+      true,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "moves": 4,
+    "minimumMoves": 4,
+    "title": "계단의 별자리",
+    "objective": "mixed",
+    "pacing": "finale",
+    "designIntent": "길이가 다른 열의 계단 경계에서 연결하고 낙하를 이용한다.",
+    "values": [
+      null,
+      null,
+      5,
+      4,
+      7,
+      null,
+      9,
+      4,
+      7,
+      2,
+      5,
+      3,
+      6,
+      2,
+      6,
+      7,
+      1,
+      8,
+      2,
+      1
+    ],
+    "stars": [
+      3,
+      7,
+      9,
+      11,
+      12,
+      13,
+      14,
+      17,
+      18,
+      19
+    ],
+    "solution": [
+      [
+        6,
+        12,
+        11
+      ],
+      [
+        12,
+        13,
+        19
+      ],
+      [
+        17,
+        12,
+        18
+      ],
+      [
+        14,
+        13,
+        19
+      ]
+    ],
+    "legalFirstMoves": 13,
+    "winningFirstMoves": 2,
+    "gravitySteps": 2,
+    "boundarySteps": 1,
+    "mixedSequences": true
+  }
+]
