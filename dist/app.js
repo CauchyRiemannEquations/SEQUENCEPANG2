@@ -1,11 +1,13 @@
 import { kind, adjacent, stars } from './engine.js';
-import { levels } from './levels.js';
+import { levels as allLevels } from './levels.js';
+import { playableLevels, hundredStageRelease } from './release.js';
 import { GameSession } from './session.js';
 import { readProgress, saveProgress, restoreRun, saveRun, nextStageIndex, resetProgress, campaignComplete } from './progress.js';
 import { dragTargets, dragHits } from './drag-hit.js';
 import { MangoHints, firstHint, hintTier } from './hints.js';
 
 const $ = id => document.getElementById(id);
+let levels = playableLevels(allLevels);
 let session;
 try { session = restoreRun(localStorage, levels); } catch {}
 session ||= new GameSession(levels);
@@ -52,7 +54,16 @@ function closeModal() {
   if (visibleHint.length && !$('game').hidden) paintHint();
 }
 
+function refreshRelease() {
+  const available = playableLevels(allLevels);
+  if (available.length === levels.length) return false;
+  levels = available;
+  session.levels = levels;
+  return true;
+}
+
 function showHome() {
+  refreshRelease();
   stopHintMotion();
   visibleHint = [];
   closeModal();
@@ -63,9 +74,10 @@ function showHome() {
   $('coming-soon').hidden = true;
   $('home-cleared').textContent = levels.filter(level => progress[level.key] === true).length;
   $('home-total').textContent = `/ ${levels.length}`;
+  $('release-note').hidden = levels.length < 100;
   const next = ['playing', 'failed'].includes(session.status) ? session.index : nextStageIndex(levels, progress);
   $('resume-note').textContent = session.status === 'playing' || next > 0 ? `STAGE ${String(next + 1).padStart(2, '0')}에서 이어서` : '첫 번째 별을 만나러 가요';
-  if (campaignComplete(levels, progress)) $('resume-note').textContent = '모든 별을 모았어요! 다음 스테이지를 준비 중이에요';
+  if (campaignComplete(levels, progress)) $('resume-note').textContent = '모든 스테이지를 클리어했어요!';
 }
 
 function showGame() {
@@ -321,6 +333,7 @@ function showComingSoon() {
 }
 
 function showResult(won) {
+  refreshRelease();
   if (won && session.index === levels.length - 1) { showComingSoon(); return; }
   show(`<div class="result-content ${won ? 'cleared' : 'failed'}">
     <div class="result-stage">STAGE ${String(session.index + 1).padStart(2, '0')}</div>
@@ -470,6 +483,7 @@ $('board').addEventListener('keydown', event => {
 $('submit').onclick = commit;
 $('ask-mango').onclick = askMango;
 $('start-game').onclick = () => {
+  refreshRelease();
   if (campaignComplete(levels, progress)) { showComingSoon(); return; }
   if (['playing', 'failed'].includes(session.status)) load(session.index);
   else load(nextStageIndex(levels, progress));
@@ -482,10 +496,20 @@ $('close-modal').onclick = closeModal;
 modal.addEventListener('cancel', event => { if (resultOpen) event.preventDefault(); });
 $('home-help').onclick = () => help();
 window.addEventListener('pagehide', () => { persistRun(); stopHintMotion(); });
-document.addEventListener('visibilitychange', () => { if (document.hidden) stopHintMotion(); else if (!$('game').hidden) paintHint(); });
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { stopHintMotion(); return; }
+  if (refreshRelease() && !$('coming-soon').hidden) showHome();
+  else if (!$('home').hidden) showHome();
+  else if (!$('game').hidden) paintHint();
+});
 reducedHintMotion.addEventListener('change', () => { if (!$('game').hidden) paintHint(); });
 function resizeGame() { if (!$('game').hidden) { cancelDrag(); fitBoard(); paint(); } }
 window.addEventListener('resize', resizeGame);
 window.visualViewport?.addEventListener('resize', resizeGame);
 document.fonts?.ready.then(resizeGame);
 showHome();
+if (Date.now() < hundredStageRelease) {
+  setTimeout(() => {
+    if (refreshRelease() && (!$('home').hidden || !$('coming-soon').hidden)) showHome();
+  }, hundredStageRelease - Date.now() + 50);
+}

@@ -24,6 +24,7 @@ dialog{color:var(--cream);background:linear-gradient(145deg,#13513e,#042d23);bor
 .home-content{justify-content:center;padding:0 0 25px;gap:0}
 .brand-home{width:min(100%,320px,calc((100svh - 292px)*1.62));min-width:190px;aspect-ratio:1.62;max-width:320px}
 .home-tagline{font-size:15px;margin:8px 0 13px}
+.release-note{margin:-5px 0 9px;padding:4px 12px;border:1px solid #ffd85c80;border-radius:20px;color:#ffe589;background:#78511355;font-size:12px}
 .home-progress{padding:7px 13px;font-size:13px}.home-progress strong{font-size:17px}
 .home-actions{margin-top:20px;max-width:310px}.start-button{font-size:26px;padding:15px 22px;border-radius:19px}
 .resume-note{font-size:13px;min-height:20px;margin-top:12px}

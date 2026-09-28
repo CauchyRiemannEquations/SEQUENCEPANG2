@@ -8,6 +8,7 @@
     "test": "node scripts/build-sw.mjs --check && node --test tests/*.test.mjs",
     "generate:campaign": "node scripts/generate-campaign.mjs",
     "generate:expansion": "node scripts/generate-expansion.mjs",
+    "generate:encore": "node scripts/generate-encore.mjs",
     "build:pwa": "node scripts/build-sw.mjs"
   },
   "engines": {

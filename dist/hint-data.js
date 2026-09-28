@@ -325,5 +325,425 @@ export const hintData = {
       6,
       7
     ]
+  },
+  "encore-v1-51": {
+    "signature": "[4,3,[[1,false],[8,false],[4,false],[4,true],[8,false],[6,true],[1,true],[9,true],[2,false],[6,true],[6,true],[3,true],[8,false],[9,false],[6,false],[5,true]]]",
+    "path": [
+      5,
+      9,
+      10
+    ]
+  },
+  "encore-v1-52": {
+    "signature": "[4,4,[[3,true],[2,true],[1,true],[3,false],[8,false],[7,true],[8,true],[8,true],[7,true],[2,false],[5,true],[8,false],[9,true],[8,true],[8,false],[1,false]]]",
+    "path": [
+      0,
+      1,
+      2
+    ]
+  },
+  "encore-v1-53": {
+    "signature": "[5,4,[[3,true],[6,false],[4,false],[4,false],[4,false],[1,false],[7,true],[3,false],[1,true],[2,false],[6,true],[2,false],[1,false],[7,true],[8,false],[5,true],[8,false],[3,false],[8,false],[2,false],[7,false],[7,true],[1,false],[3,false],[8,false]]]",
+    "path": [
+      3,
+      7,
+      11,
+      5
+    ]
+  },
+  "encore-v1-54": {
+    "signature": "[5,5,[[6,false],[4,true],[6,true],[9,false],[7,false],[8,false],[9,true],[4,true],[2,true],[5,false],[1,false],[5,true],[1,true],[4,true],[9,true],[7,false],[8,true],[6,true],[1,false],[8,false],[8,false],[2,true],[5,true],[5,true],[9,true]]]",
+    "path": [
+      8,
+      13,
+      17,
+      16
+    ]
+  },
+  "encore-v1-55": {
+    "signature": "[5,5,[[9,false],[9,true],[9,true],[5,false],[7,true],[4,false],[8,true],[2,false],[7,false],[5,false],[9,true],[1,false],[8,true],[5,true],[2,true],[6,false],[9,true],[5,false],[9,true],[8,true],[8,true],[8,false],[1,false],[9,false],[1,false]]]",
+    "path": [
+      14,
+      13,
+      19
+    ]
+  },
+  "encore-v1-56": {
+    "signature": "[4,3,[[2,true],[4,true],[9,false],[2,false],[1,true],[9,true],[6,false],[7,false],[1,true],[3,true],[3,true],[5,false],[3,true],[7,false],[3,true],[8,false]]]",
+    "path": [
+      1,
+      0,
+      4
+    ]
+  },
+  "encore-v1-57": {
+    "signature": "[4,4,[[5,false],[9,false],[9,true],[2,true],[6,false],[1,false],[7,true],[2,true],[9,true],[5,false],[2,false],[7,false],[3,true],[6,true],[1,true],[7,true]]]",
+    "path": [
+      8,
+      13,
+      12
+    ]
+  },
+  "encore-v1-58": {
+    "signature": "[5,4,[[5,true],[9,true],[1,false],[8,false],[3,false],[6,true],[2,false],[9,false],[8,false],[3,false],[6,true],[9,false],[4,false],[1,false],[3,false],[3,true],[4,true],[1,true],[1,false],[2,false],[4,false],[9,false],[9,false],[5,true],[9,true]]]",
+    "path": [
+      2,
+      6,
+      12
+    ]
+  },
+  "encore-v1-59": {
+    "signature": "[5,5,[[8,false],[5,true],[2,false],[3,false],[4,true],[1,true],[3,false],[7,true],[8,true],[1,true],[8,false],[9,true],[8,false],[7,true],[9,true],[8,false],[5,false],[7,true],[1,true],[1,true],[5,false],[7,true],[7,true],[6,false],[9,true]]]",
+    "path": [
+      5,
+      6,
+      1,
+      7,
+      11
+    ]
+  },
+  "encore-v1-60": {
+    "signature": "[5,5,[[4,true],[7,true],[6,true],[2,true],[8,false],[2,true],[7,true],[2,true],[2,true],[9,false],[5,false],[1,true],[1,false],[5,true],[1,false],[2,false],[8,true],[3,false],[8,true],[2,false],[7,true],[7,true],[4,false],[6,true],[3,false]]]",
+    "path": [
+      0,
+      5,
+      11
+    ]
+  },
+  "encore-v1-61": {
+    "signature": "[4,3,[[9,false],[7,false],[1,true],[1,false],[3,true],[9,false],[5,true],[7,true],[1,false],[2,false],[9,true],[5,true],[5,false],[2,false],[9,true],[2,false]]]",
+    "path": [
+      6,
+      7,
+      10
+    ]
+  },
+  "encore-v1-62": {
+    "signature": "[4,4,[[3,false],[2,false],[7,true],[2,false],[7,true],[4,true],[6,true],[3,true],[3,false],[6,true],[1,true],[9,false],[4,false],[9,true],[6,true],[5,true]]]",
+    "path": [
+      4,
+      5,
+      10
+    ]
+  },
+  "encore-v1-63": {
+    "signature": "[5,4,[[2,false],[7,false],[3,true],[1,true],[4,false],[2,false],[6,false],[6,true],[8,false],[1,true],[3,false],[8,false],[1,false],[7,false],[8,false],[5,false],[5,false],[3,false],[2,true],[6,false],[6,false],[6,true],[5,false],[9,false],[8,false]]]",
+    "path": [
+      8,
+      13,
+      19
+    ]
+  },
+  "encore-v1-64": {
+    "signature": "[5,5,[[2,true],[2,false],[6,false],[3,true],[2,true],[5,true],[8,false],[3,true],[1,false],[7,false],[5,false],[3,true],[8,false],[3,true],[6,false],[9,false],[1,true],[2,true],[8,false],[2,false],[3,true],[7,false],[9,true],[3,false],[8,false]]]",
+    "path": [
+      0,
+      5,
+      6
+    ]
+  },
+  "encore-v1-65": {
+    "signature": "[5,5,[[6,false],[5,true],[7,false],[2,true],[6,false],[9,false],[9,false],[9,true],[4,false],[2,false],[4,false],[7,true],[7,false],[9,true],[7,false],[8,true],[1,true],[3,true],[3,true],[8,true],[8,true],[7,false],[2,true],[6,true],[9,false]]]",
+    "path": [
+      13,
+      17,
+      16
+    ]
+  },
+  "encore-v1-66": {
+    "signature": "[4,3,[[4,false],[7,false],[4,true],[5,true],[7,false],[8,true],[8,true],[6,true],[5,false],[2,true],[9,true],[4,false],[2,false],[5,false],[3,false],[2,true]]]",
+    "path": [
+      6,
+      7,
+      11,
+      15
+    ]
+  },
+  "encore-v1-67": {
+    "signature": "[4,4,[[7,true],[4,true],[1,false],[7,true],[4,false],[1,true],[6,true],[4,false],[3,false],[1,true],[4,true],[3,true],[8,false],[7,false],[7,false],[9,true]]]",
+    "path": [
+      0,
+      1,
+      5
+    ]
+  },
+  "encore-v1-68": {
+    "signature": "[5,4,[[5,false],[5,true],[4,false],[5,true],[8,false],[4,true],[2,false],[8,false],[6,false],[9,false],[2,false],[6,true],[9,false],[9,true],[1,true],[9,false],[5,false],[3,false],[6,false],[1,false],[2,false],[2,true],[8,true],[8,false],[5,false]]]",
+    "path": [
+      4,
+      8,
+      2,
+      6
+    ]
+  },
+  "encore-v1-69": {
+    "signature": "[5,5,[[7,true],[7,true],[7,true],[4,true],[1,true],[8,false],[2,false],[4,false],[5,true],[9,true],[1,false],[9,true],[4,false],[7,true],[3,true],[2,false],[1,false],[6,false],[9,true],[4,false],[4,true],[2,false],[7,false],[2,false],[2,false]]]",
+    "path": [
+      0,
+      1,
+      2
+    ]
+  },
+  "encore-v1-70": {
+    "signature": "[5,5,[[3,false],[6,false],[4,true],[1,true],[3,true],[4,false],[1,true],[9,false],[3,true],[3,true],[4,true],[4,true],[7,false],[1,false],[6,true],[8,true],[2,true],[9,true],[9,true],[2,true],[8,false],[1,false],[2,false],[9,false],[6,false]]]",
+    "path": [
+      9,
+      14,
+      18
+    ]
+  },
+  "encore-v1-71": {
+    "signature": "[4,3,[[7,false],[6,true],[1,false],[5,true],[2,false],[7,true],[6,true],[4,false],[2,true],[7,false],[6,false],[3,false],[9,false],[2,true],[7,true],[8,false]]]",
+    "path": [
+      3,
+      6,
+      5
+    ]
+  },
+  "encore-v1-72": {
+    "signature": "[4,4,[[7,true],[6,true],[5,true],[4,false],[5,true],[3,true],[1,true],[8,true],[6,false],[8,true],[9,false],[7,true],[9,true],[1,true],[4,true],[7,false]]]",
+    "path": [
+      4,
+      5,
+      6
+    ]
+  },
+  "encore-v1-73": {
+    "signature": "[5,4,[[4,false],[9,true],[3,false],[5,false],[6,false],[9,false],[7,false],[1,false],[3,true],[1,false],[6,true],[6,true],[5,true],[8,false],[6,false],[3,true],[1,true],[2,false],[8,false],[4,false],[1,true],[4,false],[8,false],[4,true],[7,false]]]",
+    "path": [
+      13,
+      18,
+      22
+    ]
+  },
+  "encore-v1-74": {
+    "signature": "[5,5,[[6,false],[4,true],[4,false],[6,true],[3,false],[5,true],[7,false],[1,false],[3,false],[7,false],[9,true],[9,false],[6,true],[4,true],[6,false],[7,false],[7,true],[4,false],[9,true],[6,true],[2,false],[8,true],[7,false],[8,true],[2,false]]]",
+    "path": [
+      5,
+      6,
+      10
+    ]
+  },
+  "encore-v1-75": {
+    "signature": "[5,5,[[2,true],[2,true],[8,true],[1,true],[2,true],[7,false],[6,false],[8,false],[2,false],[3,false],[2,true],[3,false],[6,true],[4,true],[1,true],[3,false],[6,false],[7,true],[8,true],[8,true],[5,false],[5,true],[1,false],[7,true],[2,false]]]",
+    "path": [
+      14,
+      13,
+      17
+    ]
+  },
+  "encore-v1-76": {
+    "signature": "[4,3,[[7,false],[1,true],[5,true],[2,true],[6,true],[9,false],[6,false],[8,true],[1,true],[4,true],[1,false],[4,false],[6,false],[3,false],[1,true],[1,true]]]",
+    "path": [
+      3,
+      2,
+      7
+    ]
+  },
+  "encore-v1-77": {
+    "signature": "[4,4,[[9,false],[7,true],[3,true],[2,true],[6,true],[5,true],[6,false],[8,true],[4,false],[5,true],[8,false],[1,true],[1,true],[9,true],[4,false],[4,true]]]",
+    "path": [
+      1,
+      4,
+      9,
+      14
+    ]
+  },
+  "encore-v1-78": {
+    "signature": "[5,4,[[2,false],[9,false],[4,false],[5,false],[4,false],[6,true],[2,false],[7,true],[8,false],[8,false],[6,true],[2,false],[1,false],[5,true],[5,false],[7,false],[6,true],[9,false],[7,true],[7,true],[5,false],[2,false],[9,true],[1,true],[9,false]]]",
+    "path": [
+      2,
+      6,
+      12
+    ]
+  },
+  "encore-v1-79": {
+    "signature": "[5,5,[[4,false],[1,true],[7,true],[2,false],[2,false],[5,false],[9,true],[9,true],[3,true],[6,false],[1,true],[6,true],[7,true],[5,false],[8,true],[1,false],[2,true],[8,true],[1,false],[7,true],[5,true],[1,true],[8,false],[3,false],[6,false]]]",
+    "path": [
+      7,
+      12,
+      13,
+      8
+    ]
+  },
+  "encore-v1-80": {
+    "signature": "[5,5,[[3,false],[2,false],[5,true],[5,true],[9,true],[9,false],[2,false],[6,false],[1,true],[3,true],[6,false],[3,true],[2,true],[5,true],[2,true],[1,true],[6,false],[8,true],[9,true],[6,true],[9,false],[5,false],[5,false],[4,true],[6,true]]]",
+    "path": [
+      4,
+      3,
+      8
+    ]
+  },
+  "encore-v1-81": {
+    "signature": "[4,3,[[1,true],[8,false],[3,true],[8,false],[2,true],[8,true],[2,true],[9,false],[1,true],[4,false],[5,true],[3,false],[9,false],[2,true],[2,false],[5,false]]]",
+    "path": [
+      0,
+      4,
+      9,
+      5
+    ]
+  },
+  "encore-v1-82": {
+    "signature": "[4,4,[[4,true],[1,false],[6,false],[5,true],[6,false],[6,false],[1,false],[3,true],[3,true],[8,true],[5,true],[3,false],[3,false],[5,true],[5,false],[5,true]]]",
+    "path": [
+      0,
+      4,
+      9
+    ]
+  },
+  "encore-v1-83": {
+    "signature": "[5,4,[[8,false],[9,false],[1,false],[7,true],[6,false],[1,false],[2,true],[6,false],[1,false],[7,true],[8,false],[2,true],[3,false],[1,false],[1,false],[5,false],[7,true],[7,true],[6,false],[8,true],[2,true],[1,false],[7,true],[3,false],[1,false]]]",
+    "path": [
+      2,
+      8,
+      13,
+      14
+    ]
+  },
+  "encore-v1-84": {
+    "signature": "[5,5,[[9,true],[2,false],[6,true],[8,true],[7,true],[3,false],[3,true],[3,true],[6,true],[3,false],[6,false],[8,true],[8,true],[5,true],[6,true],[3,true],[7,true],[2,false],[6,false],[2,false],[1,false],[7,true],[7,false],[9,false],[7,false]]]",
+    "path": [
+      3,
+      4,
+      8,
+      13
+    ]
+  },
+  "encore-v1-85": {
+    "signature": "[5,5,[[1,false],[3,true],[8,true],[7,true],[8,true],[7,false],[8,false],[4,true],[5,false],[4,false],[8,false],[3,false],[7,true],[9,false],[9,true],[7,false],[4,false],[9,false],[8,true],[5,true],[4,false],[9,false],[2,true],[4,false],[2,true]]]",
+    "path": [
+      1,
+      7,
+      8
+    ]
+  },
+  "encore-v1-86": {
+    "signature": "[4,3,[[1,false],[1,true],[1,false],[2,true],[3,false],[7,true],[9,false],[4,true],[4,false],[4,true],[5,false],[5,false],[1,true],[8,false],[3,false],[9,true]]]",
+    "path": [
+      5,
+      9,
+      12
+    ]
+  },
+  "encore-v1-87": {
+    "signature": "[4,4,[[7,false],[7,true],[9,true],[3,true],[8,true],[1,false],[8,true],[8,false],[9,true],[5,true],[2,false],[8,true],[2,false],[5,true],[5,true],[3,false]]]",
+    "path": [
+      4,
+      9,
+      10
+    ]
+  },
+  "encore-v1-88": {
+    "signature": "[5,4,[[7,false],[2,false],[2,true],[3,false],[6,false],[8,false],[3,false],[7,false],[6,false],[5,false],[6,false],[8,false],[9,false],[1,true],[5,false],[6,false],[8,false],[8,false],[2,true],[9,true],[4,false],[2,false],[3,true],[3,true],[5,true]]]",
+    "path": [
+      7,
+      11,
+      12
+    ]
+  },
+  "encore-v1-89": {
+    "signature": "[5,5,[[4,false],[3,true],[9,false],[8,true],[8,false],[1,true],[4,true],[8,false],[4,false],[4,false],[3,true],[4,false],[7,false],[3,true],[9,false],[7,true],[3,true],[3,true],[7,true],[4,false],[3,true],[8,true],[8,false],[7,true],[5,false]]]",
+    "path": [
+      13,
+      17,
+      16
+    ]
+  },
+  "encore-v1-90": {
+    "signature": "[5,5,[[5,true],[9,false],[1,true],[6,true],[4,false],[2,false],[4,false],[4,true],[4,false],[3,false],[2,true],[8,false],[1,true],[9,true],[9,false],[2,true],[6,false],[5,true],[1,false],[1,false],[1,true],[9,true],[2,true],[1,true],[4,false]]]",
+    "path": [
+      12,
+      17,
+      13
+    ]
+  },
+  "encore-v1-91": {
+    "signature": "[4,3,[[5,false],[2,false],[4,false],[8,false],[8,true],[4,true],[1,true],[1,false],[7,true],[6,false],[4,false],[1,true],[3,true],[2,true],[5,true],[7,true]]]",
+    "path": [
+      4,
+      8,
+      9,
+      14
+    ]
+  },
+  "encore-v1-92": {
+    "signature": "[4,4,[[9,true],[1,false],[8,false],[8,true],[9,true],[4,false],[5,true],[1,true],[7,true],[5,true],[3,true],[7,false],[9,true],[2,true],[4,false],[9,true]]]",
+    "path": [
+      7,
+      10,
+      9,
+      8
+    ]
+  },
+  "encore-v1-93": {
+    "signature": "[5,4,[[5,false],[2,true],[7,true],[2,false],[7,false],[4,true],[3,false],[9,true],[2,true],[3,false],[3,false],[3,false],[3,false],[3,false],[2,false],[4,true],[8,true],[2,true],[7,false],[6,false],[4,true],[6,false],[6,false],[2,false],[2,false]]]",
+    "path": [
+      6,
+      10,
+      11,
+      12,
+      13
+    ]
+  },
+  "encore-v1-94": {
+    "signature": "[5,5,[[5,false],[1,true],[6,true],[8,true],[7,false],[5,false],[8,false],[6,false],[1,false],[2,false],[9,false],[3,false],[2,true],[7,true],[6,true],[5,true],[4,true],[9,true],[6,true],[6,true],[6,false],[8,false],[5,true],[7,true],[7,true]]]",
+    "path": [
+      8,
+      12,
+      11,
+      16,
+      22
+    ]
+  },
+  "encore-v1-95": {
+    "signature": "[5,5,[[8,false],[4,true],[5,false],[6,false],[5,false],[7,false],[7,true],[1,true],[2,false],[1,false],[1,false],[2,true],[1,true],[9,true],[2,false],[1,true],[6,false],[6,true],[1,true],[5,true],[9,true],[3,false],[5,false],[2,false],[9,true]]]",
+    "path": [
+      18,
+      19,
+      24
+    ]
+  },
+  "encore-v1-96": {
+    "signature": "[4,3,[[3,false],[3,false],[7,true],[3,false],[8,false],[6,false],[8,true],[7,false],[3,false],[7,false],[8,true],[3,true],[1,false],[4,false],[9,false],[5,true]]]",
+    "path": [
+      5,
+      9,
+      6
+    ]
+  },
+  "encore-v1-97": {
+    "signature": "[4,4,[[1,true],[8,true],[9,false],[8,false],[3,true],[8,true],[5,false],[5,false],[9,true],[7,true],[6,true],[3,true],[8,true],[1,false],[2,true],[6,false]]]",
+    "path": [
+      0,
+      4,
+      8
+    ]
+  },
+  "encore-v1-98": {
+    "signature": "[5,4,[[9,false],[7,false],[4,true],[4,true],[3,false],[3,false],[8,false],[7,false],[7,false],[2,true],[6,false],[2,false],[3,true],[6,false],[5,false],[3,false],[8,true],[5,false],[2,true],[2,true],[7,true],[6,true],[1,true],[9,false],[7,false]]]",
+    "path": [
+      0,
+      6,
+      7,
+      13,
+      14
+    ]
+  },
+  "encore-v1-99": {
+    "signature": "[5,5,[[8,true],[6,false],[3,false],[2,true],[2,false],[4,false],[2,true],[4,true],[8,false],[8,true],[1,true],[5,false],[9,true],[1,true],[1,true],[9,false],[3,true],[9,true],[8,true],[5,false],[9,false],[3,false],[2,false],[3,true],[5,false]]]",
+    "path": [
+      0,
+      1,
+      7,
+      6
+    ]
+  },
+  "encore-v1-100": {
+    "signature": "[5,5,[[2,false],[3,true],[8,true],[1,false],[8,false],[8,false],[7,false],[5,true],[7,false],[4,true],[2,false],[1,false],[8,false],[5,true],[4,true],[3,true],[8,true],[8,true],[5,true],[4,false],[3,true],[2,true],[9,false],[3,false],[6,true]]]",
+    "path": [
+      14,
+      18,
+      24
+    ]
   }
 };

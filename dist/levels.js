@@ -1,5 +1,6 @@
 import { campaignData } from './campaign-data.js';
 import { expansionData } from './expansion-data.js';
+import { encoreData } from './encore-data.js';
 
 const specs = [
   [4,2,[1,2,3,8, 7,9,5,2, 2,4,6,9, 9,5,8,7],[0,2,8,10]],
@@ -11,6 +12,11 @@ export const chapters = [
   { id: 'orbit', name: '별의 궤도', subtitle: '다음 움직임을 생각해요', symbol: '✧' },
   { id: 'weave', name: '별의 갈림길', subtitle: '남겨 둔 숫자를 다시 만나요', symbol: '✶' },
   { id: 'summit', name: '별의 정상', subtitle: '마지막 연결까지 내다봐요', symbol: '✷' },
+  { id: 'dawn', name: '새벽의 별', subtitle: '다시 길을 찾아요', symbol: '✦' },
+  { id: 'river', name: '별의 강', subtitle: '흐름을 따라 생각해요', symbol: '✧' },
+  { id: 'prism', name: '빛의 조각', subtitle: '여러 길을 비교해요', symbol: '❋' },
+  { id: 'horizon', name: '먼 별자리', subtitle: '다음 낙하를 내다봐요', symbol: '✶' },
+  { id: 'crown', name: '백 번째 별', subtitle: '마지막 별까지 이어가요', symbol: '✷' },
 ];
 
 const tutorials = [
@@ -29,9 +35,11 @@ const make = (n, moves, values, ss, key, extra) => ({ n, moves, key, ...extra,
 const originalNames = ['두 번의 연결', '새로운 간격'];
 const campaignNames = ['갈림길', '남겨 둔 숫자', '연결의 순서', '두 가지 수열', '한 수 먼저', '숲의 마지막 길', '연쇄 낙하', '엇갈린 수열', '남겨야 할 별', '숲의 미로', '새로운 궤도', '교차하는 길', '별의 자리', '네 번의 생각', '다섯 걸음', '멀리 있는 별', '빈자리의 의미', '이어지는 별', '마지막 갈림길', '별자리 완성'];
 const expansionNames = ['다시 한 걸음', '두 가지 간격', '빈손의 시작', '겹친 궤도', '첫 번째 고개', '작은 쉼표', '곱과 차', '기다리는 별', '엇갈린 낙하', '두 번째 고개', '작은 별밭', '바뀌는 간격', '보이지 않는 길', '다섯 번의 선택', '세 번째 고개', '잠깐의 여유', '맞물린 수열', '마지막 준비', '정상으로', '쉰 번째 별'];
+const encoreNames = ['다시 뜬 별', '갈라지는 길', '별 없는 첫걸음', '내려오는 숫자', '다섯 번째 선택', '작은 숨', '엇갈린 길', '숨겨 둔 별', '남겨 둔 숫자', '새벽의 끝', '강가의 별', '두 갈래 흐름', '빈자리 먼저', '흐르는 수열', '돌아오는 길', '잠깐의 빛', '서로 다른 간격', '기다린 연결', '긴 낙하', '강 건너 별', '빛나는 숫자', '엇갈린 간격', '준비하는 손', '달라진 자리', '빛의 고개', '잠시 쉬어가기', '두 번의 생각', '사라진 별자리', '숫자의 그림자', '빛의 마지막 길', '멀리 뜬 별', '새로운 갈림길', '보이지 않는 첫 수', '끝까지 내려가', '먼 길의 별', '한 번 더', '비슷한 수열', '순서의 비밀', '다음 자리', '지평선의 끝', '왕관의 첫 별', '끝을 향한 길', '먼저 비우기', '마지막 낙하', '남은 별 하나', '잠깐의 여유', '엇바뀐 자리', '별을 잇는 순서', '아흔아홉 번째 별', '백 번째 별'];
 export const levels = [
   ...tutorials.map(([n,m,v,s,title,lesson], i) => make(n,m,v,s,`intro-${i+1}`, { chapter: 'first', title, lesson, objective: 'tutorial' })),
   ...specs.map(([n,m,v,s], i) => make(n,m,v,s,`original-${i+1}`, { chapter: 'first', title: originalNames[i], legacyIndex: i, objective: 'practice', ...(i === 0 ? { lesson: '타일을 지우면 위의 숫자가 내려와요. 새 타일은 생기지 않아요.' } : {}) })),
   ...campaignData.map((l,i) => make(l.n,l.moves,l.values,l.stars,`complex-v3-${i+11}`, { chapter: i < 10 ? 'grove' : 'orbit', title: campaignNames[i], objective: l.objective })),
   ...expansionData.map((l,i) => make(l.n,l.moves,l.values,l.stars,`expansion-v1-${i+31}`, { chapter: i < 10 ? 'weave' : 'summit', title: expansionNames[i], objective: l.objective })),
+  ...encoreData.map((l,i) => make(l.n,l.moves,l.values,l.stars,`encore-v1-${i+51}`, { chapter: ['dawn', 'river', 'prism', 'horizon', 'crown'][Math.floor(i / 10)], title: encoreNames[i], objective: l.objective })),
 ].map((level, i) => ({ ...level, id: i + 1 }));
