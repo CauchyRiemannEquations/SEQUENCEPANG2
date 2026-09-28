@@ -498,8 +498,8 @@ $('home-help').onclick = () => help();
 window.addEventListener('pagehide', () => { persistRun(); stopHintMotion(); });
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) { stopHintMotion(); return; }
-  if (refreshRelease() && !$('coming-soon').hidden) showHome();
-  else if (!$('home').hidden) showHome();
+  const opened = refreshRelease();
+  if (opened && (!$('home').hidden || !$('coming-soon').hidden)) showHome();
   else if (!$('game').hidden) paintHint();
 });
 reducedHintMotion.addEventListener('change', () => { if (!$('game').hidden) paintHint(); });
